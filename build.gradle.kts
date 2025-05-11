@@ -16,6 +16,9 @@ repositories {
 }
 
 dependencies {
+    implementation("org.jsoup:jsoup:1.15.4") //Extracting from html
+    implementation("org.seleniumhq.selenium:selenium-chrome-driver:4.21.0") //JS-site scrapanje
+
     // Note, if you develop a library, you should use compose.desktop.common.
     // compose.desktop.currentOs should be used in launcher-sourceSet
     // (in a separate module for demo project and in testMain).
