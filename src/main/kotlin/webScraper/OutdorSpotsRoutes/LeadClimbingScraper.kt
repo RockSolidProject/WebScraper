@@ -1,39 +1,24 @@
-package webScraper
+package webScraper.OutdorSpotsRoutes
 import org.jsoup.Jsoup
-class ClimbingSpot(
-    val name: String,
-    var coordinates: Pair<Double, Double> = Pair(0.0, 0.0),
-    var routes: MutableList<ClimbingRoute> = mutableListOf()
-)
+import webScraper.ScraperUtils
 
-class ClimbingRoute(
-    val name: String,
-    val difficulty: String,
-    val length: String,
-)
+class LeadClimbingScraper{
 
-class PlezanjeScraper{
+    fun scrapeAllClimbingSpots(limit : Int? = null): List<ClimbingSpot> {
+        var spots = getClimbingSpots()
 
-    fun getData1(): String? {
-        val html = ScraperUtils.getContent("https://plezanje.net/plezalisca/slovenija;tip=sportne", delay = 3000)
-        if (html == null){
-            println("Fetching html failed")
-            return null
+        if (limit != null){
+            spots = spots.take(limit)
         }
-        val document = Jsoup.parse(html) //YOU WANT TO DO JSOUP HTML PARSING
-        return document.select("h1").first()?.text()
-    }
 
-    fun scrapeAllClimbingSpots(): List<ClimbingSpot> {
-        val spots = getClimbingSpots()
         val climbingSpots = scrapeClimbingSpotsAndRoutes(spots)
 
         return climbingSpots
     }
 
     private fun getClimbingSpots(): List<Triple<String, String, ClimbingSpot>> {
-        println("IN getClimbingSpots")
-        val html = ScraperUtils.getContent("https://plezanje.net/plezalisca/slovenija;tip=sportne", delay = 1000)
+        println("Getting lead climbing spots and routes")
+        val html = ScraperUtils.getContent("https://plezanje.net/plezalisca/slovenija;tip=sportne", delay = 2000)
         if (html == null) {
             println("Fetching html failed")
             return emptyList()
@@ -96,6 +81,8 @@ class PlezanjeScraper{
                     val divided = coordinatesText.split(" ")
                     val latitude = divided.getOrNull(0)?.toDoubleOrNull()
                     val longitude = divided.getOrNull(1)?.toDoubleOrNull()
+                    climbingSpot.coordinates = if (latitude == null || longitude == null) null
+                        else Pair(latitude, longitude)
                     println("Coordinates: $latitude, $longitude")
                 } else {
                     println("No valid coordinates span found")
@@ -114,11 +101,14 @@ class PlezanjeScraper{
                         val length = row.select("td.ng-star-inserted").getOrNull(1)?.text()?.trim().orEmpty()
                         val difficulty = row.selectFirst("td.ng-star-inserted app-grade.ng-star-inserted span.grade-name.ng-star-inserted")?.text()?.trim().orEmpty()
 
+                        val lengthNum = length.split(" ")[0].toIntOrNull()
+
                         if (routeName.isNotEmpty()) {
                             ClimbingRoute(
                                 name = routeName,
                                 difficulty = difficulty,
-                                length = length,
+                                length = lengthNum,
+                                type = RouteType.Lead
                             )
                         } else {
                             null
@@ -133,32 +123,4 @@ class PlezanjeScraper{
             climbingSpot
         }
     }
-
-    fun climbingSpotsToString(routes: List<ClimbingSpot>): String {
-        var result = ""
-        routes.forEach {
-            result += "Name: ${it.name}\n"
-            result += "Coordinates: ${it.coordinates.first}, ${it.coordinates.second}\n"
-            it.routes.forEach { route ->
-                result += "\t${route.name}, Difficulty: ${route.difficulty}, Length: ${route.length}\n"
-            }
-            result += "\n"
-        }
-        return result
-    }
-
-
-    /*fun getData() : MutableList<ClimbingSpot>{
-        val climbingSpots : MutableList<ClimbingSpot> = mutableListOf()
-
-        val climbingSpot = ClimbingSpot(name="Armeško", region="Dolenjska", koordinate = Pair(46.01433,15.49110))
-
-        val climbingRoute = ClimbingRoute(name="dada",difficulty="dasdada", length="4m")
-
-        climbingSpot.routes.add(climbingRoute)
-
-        climbingSpots.add(climbingSpot)
-
-        return climbingSpots
-    }*/
 }
