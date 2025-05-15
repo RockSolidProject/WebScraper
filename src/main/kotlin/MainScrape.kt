@@ -3,8 +3,6 @@ import webScraper.OutdorSpotsRoutes.BoulderClimbingScraper
 import webScraper.OutdorSpotsRoutes.LeadClimbingScraper
 import java.io.File
 
-//import java.io.File
-
 fun main() {
     var output = ""
     KspScraper().getData1().forEach {

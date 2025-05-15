@@ -108,6 +108,7 @@ class LeadClimbingScraper{
                                 name = routeName,
                                 difficulty = difficulty,
                                 length = lengthNum,
+                                type = RouteType.Lead
                             )
                         } else {
                             null

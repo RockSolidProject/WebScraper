@@ -17,7 +17,7 @@ class BoulderClimbingScraper {
     }
 
     private fun getClimbingSpots(): List<Triple<String, String, ClimbingSpot>> {
-        println("Getting lead climbing spots and routes")
+        println("Getting boulder climbing spots and routes")
         val html = ScraperUtils.getContent("https://plezanje.net/plezalisca/slovenija;tip=balvani", delay = 2000)
         if (html == null) {
             println("Fetching html failed")
@@ -108,6 +108,7 @@ class BoulderClimbingScraper {
                                 name = routeName,
                                 difficulty = difficulty,
                                 length = lengthNum,
+                                type = RouteType.Boulder
                             )
                         } else {
                             null
