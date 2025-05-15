@@ -1,16 +1,11 @@
 import webScraper.KspScraper
-import webScraper.PlezanjeScraper
+import webScraper.OutdorSpotsRoutes.LeadClimbingScraper
 import java.io.File
 
 fun main() {
-    println(PlezanjeScraper().getData1())
-    println(KspScraper().getData1())
-    val climbingSpot = PlezanjeScraper().scrapeAllClimbingSpots()
-    val output = PlezanjeScraper().climbingSpotsToString(climbingSpot)
-
-    // Save the output to a file
-    File("climbing_spots.txt").writeText(output)
-    println("Climbing spots saved to climbing_spots.txt")
-
-
+    var output = ""
+    LeadClimbingScraper().scrapeAllClimbingSpots(4).forEach {
+        output += "$it\n"
+    }
+    File("output_test.txt").writeText(output)
 }

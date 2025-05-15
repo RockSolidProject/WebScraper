@@ -1,5 +1,5 @@
 .idea
-
+output_test.txt
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
