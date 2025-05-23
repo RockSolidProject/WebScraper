@@ -81,7 +81,11 @@ fun ClimbingCenter(
         ) {
             when (menuState) {
                 ClimbingCenterState.ADD_CENTER -> {
-                    AddClimbingCenter()
+                    AddClimbingCenter(
+                        onAddClimbingCenter = { newCenter ->
+                            onUpdateCenters(climbingCenters + newCenter)
+                        }
+                    )
                 }
 
                 ClimbingCenterState.CENTERS -> ListClimbingCenter(
