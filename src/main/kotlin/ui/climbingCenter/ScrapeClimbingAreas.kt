@@ -1,8 +1,12 @@
 package ui.climbingCenter
 
 import androidx.compose.runtime.Composable
+import webScraper.InnerClimbingCenter.InnerClimbingCenter
 
 @Composable
-fun ScrapeClimbingCenter(){
+
+fun ScrapeClimbingCenter(
+    onAddCenters: (List<InnerClimbingCenter>) -> Unit
+){
 
 }
