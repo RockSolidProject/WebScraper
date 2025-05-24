@@ -66,6 +66,51 @@ fun ListClimbingCenter(
             onDeleteClick = { centerToDelete ->
                 val updatedCenters = climbingCenters.filter { it != centerToDelete }
                 onUpdate(updatedCenters)
+            }
+        )
+    }
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedTextField(
+                value = filterText,
+                onValueChange = {
+                    filterText = it
+                    filteredClimbingCenters = filterClimbingCenters(climbingCenters, filterText)
+                },
+                label = { Text("Filter") },
+                modifier = Modifier.weight(1f),
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Box(
+                modifier = Modifier
+                    .clickable {
+                        // TODO("Shranjevanje v bazo")
+                    }
+                    .background(Color(0xFF0288D1), shape = MaterialTheme.shapes.medium)
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Save to database",
+                    color = Color.White
+                )
+            }
+        }
+        GridClimbingCenters(
+            climbingCenters = filteredClimbingCenters,
+            onCardClick = { center ->
+                selectedCenter = center
+                isDialogOpen = true
+            },
+            onDeleteClick = { centerToDelete ->
+                val updatedCenters = climbingCenters.filter { it != centerToDelete }
+                onUpdate(updatedCenters)
                 filteredClimbingCenters = filterClimbingCenters(updatedCenters, filterText)
             }
         )
