@@ -1,11 +1,9 @@
 package ui.climbingCenter
-
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -43,17 +41,26 @@ fun ScrapeClimbingCenter(
         }
     } else {
         Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-           Box(
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .padding(bottom = 8.dp)
-                    .clickable{
-                        val newCenter = InnerClimbingCenter("New Center", 0.0, 0.0)
-                        centers = centers + newCenter
-                        onAddCenters(centers)
-                    }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
             ) {
-                Text("Add")
+                Box(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .clickable {
+                            onAddCenters(centers)
+                        }
+                        .background(Color(0xFF0288D1), shape = MaterialTheme.shapes.medium)
+                        .width(150.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Add All Centers",
+                        color = Color.White,
+                        modifier = Modifier.padding(12.dp)
+                    )
+                }
             }
 
             GridClimbingCenters(
@@ -61,6 +68,10 @@ fun ScrapeClimbingCenter(
                 onCardClick = { center ->
                     selectedCenter = center
                     isDialogOpen = true
+                },
+                onDeleteClick = { centerToDelete ->
+                    centers = centers.filter { it != centerToDelete }
+                    onAddCenters(centers)
                 }
             )
         }

@@ -7,10 +7,14 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import webScraper.InnerClimbingCenter.InnerClimbingCenter
@@ -24,12 +28,17 @@ fun ListClimbingCenter(
     var selectedCenter by remember { mutableStateOf<InnerClimbingCenter?>(null) }
     var isDialogOpen by remember { mutableStateOf(false) }
 
-
-
-    GridClimbingCenters(climbingCenters, onCardClick = { center ->
+    GridClimbingCenters(
+        climbingCenters,
+        onCardClick = { center ->
         selectedCenter = center
         isDialogOpen = true
-    })
+        },
+        onDeleteClick = { centerToDelete ->
+            val updatedCenters = climbingCenters.filter { it != centerToDelete }
+            onUpdate(updatedCenters)
+        }
+    )
 
     if (isDialogOpen && selectedCenter != null) {
         EditClimbingCenterDialog(
@@ -49,7 +58,8 @@ fun ListClimbingCenter(
 @Composable
 fun GridClimbingCenters(
     climbingCenters: List<InnerClimbingCenter>,
-    onCardClick: (InnerClimbingCenter) -> Unit
+    onCardClick: (InnerClimbingCenter) -> Unit,
+    onDeleteClick: (InnerClimbingCenter) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 150.dp),
@@ -79,12 +89,28 @@ fun GridClimbingCenters(
                         .padding(16.dp),
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = center.name,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = Color(0xFF01579B)
-                    )
-
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Text(
+                            text = center.name,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color(0xFF01579B),
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete",
+                            tint = Color.Red,
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                                .clickable { onDeleteClick(center) }
+                        )
+                    }
                     Column {
                         Text(
                             text = "Lat: ${center.latitude}",
@@ -104,6 +130,7 @@ fun GridClimbingCenters(
         }
     }
 }
+
 @Composable
 fun EditClimbingCenterDialog(
     center: InnerClimbingCenter,
