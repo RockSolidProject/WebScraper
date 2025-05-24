@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 enum class ClimbingAreaState { ADD_AREAS, AREAS, AREAS_SCRAPER, AREAS_GENERATOR }
 @Composable
 fun ClimbingAreas() {
-    var menuState by remember { mutableStateOf(ClimbingAreaState.ADD_AREAS) }
+    var menuState by remember { mutableStateOf(ClimbingAreaState.AREAS) }
     Row(Modifier.fillMaxSize()) {
         //levi meni
         Column(

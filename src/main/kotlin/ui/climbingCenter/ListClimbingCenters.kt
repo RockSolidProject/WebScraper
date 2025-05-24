@@ -122,24 +122,11 @@ fun ListClimbingCenter(
             center = selectedCenter!!,
             onDismiss = { isDialogOpen = false },
             onSave = { updatedCenter ->
-                val updatedList = climbingCenters.map {
+                val updatedCenters = climbingCenters.map {
                     if (it == selectedCenter) updatedCenter else it
                 }
-                onUpdate(updatedList)
-                isDialogOpen = false
-            }
-        )
-    }
-
-    if (isDialogOpen && selectedCenter != null) {
-        EditClimbingCenterDialog(
-            center = selectedCenter!!,
-            onDismiss = { isDialogOpen = false },
-            onSave = { updatedCenter ->
-                val updatedList = climbingCenters.map {
-                    if (it == selectedCenter) updatedCenter else it
-                }
-                onUpdate(updatedList)
+                onUpdate(updatedCenters)
+                filteredClimbingCenters = filterClimbingCenters(updatedCenters, filterText)
                 isDialogOpen = false
             }
         )

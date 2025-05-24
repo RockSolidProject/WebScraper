@@ -16,7 +16,7 @@ fun ClimbingCenter(
     climbingCenters: List<InnerClimbingCenter>,
     onUpdateCenters: (List<InnerClimbingCenter>) -> Unit
 ) {
-    var menuState by remember { mutableStateOf(ClimbingCenterState.ADD_CENTER) }
+    var menuState by remember { mutableStateOf(ClimbingCenterState.CENTERS) }
     Row(Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -101,6 +101,7 @@ fun ClimbingCenter(
                     ScrapeClimbingCenter(
                         onAddCenters = {
                             onUpdateCenters(climbingCenters + it)
+                            menuState = ClimbingCenterState.CENTERS
                         }
                     )
                 }
