@@ -66,6 +66,7 @@ fun ListClimbingCenter(
             onDeleteClick = { centerToDelete ->
                 val updatedCenters = climbingCenters.filter { it != centerToDelete }
                 onUpdate(updatedCenters)
+                filteredClimbingCenters = filterClimbingCenters(updatedCenters, filterText)
             }
         )
     }
