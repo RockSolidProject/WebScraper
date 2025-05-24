@@ -29,6 +29,7 @@ fun ClimbingCenter(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(if (menuState == ClimbingCenterState.CENTERS) Color(0xFFD6D6D6) else Color.Transparent)
                     .clickable { menuState = ClimbingCenterState.CENTERS }
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
@@ -40,6 +41,7 @@ fun ClimbingCenter(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(if (menuState == ClimbingCenterState.ADD_CENTER) Color(0xFFD6D6D6) else Color.Transparent)
                     .clickable { menuState = ClimbingCenterState.ADD_CENTER }
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
@@ -51,6 +53,7 @@ fun ClimbingCenter(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(if (menuState == ClimbingCenterState.CENTERS_SCRAPER) Color(0xFFD6D6D6) else Color.Transparent)
                     .clickable { menuState = ClimbingCenterState.CENTERS_SCRAPER }
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
@@ -62,6 +65,7 @@ fun ClimbingCenter(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(if (menuState == ClimbingCenterState.CENTERS_GENERATOR) Color(0xFFD6D6D6) else Color.Transparent)
                     .clickable { menuState = ClimbingCenterState.CENTERS_GENERATOR }
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
