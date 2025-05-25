@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 enum class ClimbingAreaState { ADD_AREAS, AREAS, AREAS_SCRAPER, AREAS_GENERATOR }
 @Composable
 fun ClimbingAreas() {
-    var menuState by remember { mutableStateOf(ClimbingAreaState.ADD_AREAS) }
+    var menuState by remember { mutableStateOf(ClimbingAreaState.AREAS) }
     Row(Modifier.fillMaxSize()) {
         //levi meni
         Column(
@@ -27,6 +27,7 @@ fun ClimbingAreas() {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(if (menuState == ClimbingAreaState.AREAS) Color(0xFFD6D6D6) else Color.Transparent)
                     .clickable { menuState = ClimbingAreaState.AREAS }
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
@@ -38,6 +39,7 @@ fun ClimbingAreas() {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(if (menuState == ClimbingAreaState.ADD_AREAS) Color(0xFFD6D6D6) else Color.Transparent)
                     .clickable { menuState = ClimbingAreaState.ADD_AREAS }
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
@@ -49,6 +51,7 @@ fun ClimbingAreas() {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(if (menuState == ClimbingAreaState.AREAS_SCRAPER) Color(0xFFD6D6D6) else Color.Transparent)
                     .clickable { menuState = ClimbingAreaState.AREAS_SCRAPER }
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
@@ -60,6 +63,7 @@ fun ClimbingAreas() {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(if (menuState == ClimbingAreaState.AREAS_GENERATOR) Color(0xFFD6D6D6) else Color.Transparent)
                     .clickable { menuState = ClimbingAreaState.AREAS_GENERATOR }
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {

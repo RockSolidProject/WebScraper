@@ -16,13 +16,30 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ui.climbingArea.ClimbingAreas
 import ui.climbingCenter.ClimbingCenter
+import webScraper.InnerClimbingCenter.InnerClimbingCenter
 
 enum class MenuState { CLIMBING_AREAS, CLIMBING_CENTERS }
 
 @Preview
 @Composable
 fun App() {
+    var climbingCenters by remember { mutableStateOf(listOf<InnerClimbingCenter>()) }
     var menuState by remember { mutableStateOf(MenuState.CLIMBING_AREAS) }
+
+    LaunchedEffect(Unit) {
+        climbingCenters = listOf(
+            InnerClimbingCenter("Slovenska bistrica", 46.0569, 14.5058),
+            InnerClimbingCenter("Center 2", 46.1628, 14.6042),
+            InnerClimbingCenter("Center 2", 46.1628, 14.6042),
+            InnerClimbingCenter("Center 2", 46.1628, 14.6042),
+            InnerClimbingCenter("Center 2", 46.1628, 14.6042),
+            InnerClimbingCenter("Center 1", 46.0569, 14.5058),
+            InnerClimbingCenter("Center 2", 46.1628, 14.6042),
+            InnerClimbingCenter("Center 2", 46.1628, 14.6042),
+            InnerClimbingCenter("Center 2", 46.1628, 14.6042),
+            InnerClimbingCenter("Center 2", 46.1628, 14.6042),
+        )
+    }
 
     Surface(
         color = MaterialTheme.colors.background,
@@ -81,7 +98,10 @@ fun App() {
             ) {
                 when (menuState) {
                     MenuState.CLIMBING_AREAS -> ClimbingAreas()
-                    MenuState.CLIMBING_CENTERS -> ClimbingCenter()
+                    MenuState.CLIMBING_CENTERS -> ClimbingCenter(
+                        climbingCenters = climbingCenters,
+                        onUpdateCenters = { climbingCenters = it }
+                    )
                 }
             }
             Box(
