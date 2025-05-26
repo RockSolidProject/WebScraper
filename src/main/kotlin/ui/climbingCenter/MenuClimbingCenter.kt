@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import webScraper.InnerClimbingCenter.InnerClimbingCenter
-
 enum class ClimbingCenterState { ADD_CENTER, CENTERS, CENTERS_SCRAPER, CENTERS_GENERATOR }
 @Composable
 fun ClimbingCenter(
@@ -88,6 +87,7 @@ fun ClimbingCenter(
                     AddClimbingCenter(
                         onAddClimbingCenter = { newCenter ->
                             onUpdateCenters(climbingCenters + newCenter)
+                            menuState = ClimbingCenterState.CENTERS
                         }
                     )
                 }
@@ -107,7 +107,12 @@ fun ClimbingCenter(
                 }
 
                 ClimbingCenterState.CENTERS_GENERATOR -> {
-                    GenerateClimbingCenter()
+                    GenerateClimbingCenters(
+                        onGenerate = {
+                            onUpdateCenters(climbingCenters + it)
+                            menuState = ClimbingCenterState.CENTERS
+                        }
+                    )
                 }
             }
         }
