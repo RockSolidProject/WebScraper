@@ -1,0 +1,5 @@
+{
+  "mongoLink": "mongodb://localhost:27017",
+  "database": "projekt",
+  "centreCollection": "climbingcenters"
+}
