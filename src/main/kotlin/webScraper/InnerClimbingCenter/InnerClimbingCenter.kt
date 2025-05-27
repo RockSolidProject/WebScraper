@@ -7,7 +7,7 @@ class InnerClimbingCenter(
     var name: String,
     var longitude: Double,
     var latitude: Double,
-    private var owner: String = "00000000000000000000000"
+    private var owner: String = "000000000000000000000000"
 ){
     override fun toString(): String {
         return "$name ($longitude, $latitude)"

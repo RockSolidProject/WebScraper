@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import dao.mongoDB.MongoInnerClimbingCenter
 import webScraper.InnerClimbingCenter.InnerClimbingCenter
 
 @Preview
@@ -45,7 +46,10 @@ fun ListClimbingCenter(
             Box(
                 modifier = Modifier
                     .clickable {
-                        // TODO("Shranjevanje v bazo")
+                        val mongoConnection = MongoInnerClimbingCenter()
+                        filteredClimbingCenters.forEach {
+                           mongoConnection.insert(it)
+                        }
                     }
                     .background(Color(0xFF0288D1), shape = MaterialTheme.shapes.medium)
                     .padding(horizontal = 16.dp, vertical = 12.dp),
