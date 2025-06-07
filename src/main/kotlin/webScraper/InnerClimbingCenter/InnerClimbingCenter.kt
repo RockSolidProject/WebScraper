@@ -7,7 +7,12 @@ class InnerClimbingCenter(
     var name: String,
     var latitude: Double,
     var longitude: Double,
-    private var owner: String = "000000000000000000000000"
+    val hasBoulders: Boolean = false,
+    val hasRoutes: Boolean = false,
+    val hasMoonboard: Boolean = false,
+    val hasSprayWall: Boolean = false,
+    val hasKilter: Boolean = false,
+    var owner: String = "000000000000000000000000"
 ){
     override fun toString(): String {
         return "$name ($longitude, $latitude)"
@@ -18,12 +23,15 @@ class InnerClimbingCenter(
             .append("longitude", longitude)
             .append("latitude", latitude)
             .append("owner", ObjectId(owner))
-            .append("hasBoulders", false)
-            .append("hasRoutes", false)
-            .append("hasMoonboard", false)
-            .append("hasSprayWall", false)
-            .append("hasKilter", false)
+            .append("hasBoulders", hasBoulders)
+            .append("hasRoutes", hasRoutes)
+            .append("hasMoonboard", hasMoonboard)
+            .append("hasSprayWall", hasSprayWall)
+            .append("hasKilter", hasKilter)
             .append("rating", 0)
             .append("__v", 0)
+    }
+    fun toJSON(): String {
+        return toDocument().toJson()
     }
 }

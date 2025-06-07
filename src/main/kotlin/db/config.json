@@ -1,5 +1,4 @@
 {
-  "mongoLink": "mongodb://localhost:27017",
-  "database": "projekt",
-  "centreCollection": "climbingcenters"
+  "backendApi": "http://localhost:3001",
+  "climbingCenters": "/climbingCenter"
 }

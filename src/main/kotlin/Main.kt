@@ -9,10 +9,6 @@ fun main() = application {
         return@application
     }
 
-    Runtime.getRuntime().addShutdownHook(Thread {
-        DbUtil.closeDbConnection()
-    })
-
     Window(onCloseRequest = ::exitApplication) {
         App()
     }
