@@ -1,5 +1,6 @@
 package dao.api
 
+import dao.InnerClimbingCenterDao
 import db.DbUtil
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Request
@@ -8,8 +9,8 @@ import org.json.JSONArray
 import webScraper.InnerClimbingCenter.InnerClimbingCenter
 import java.io.IOException
 
-class ApiInnerClimbingCenters {
-    fun getAll() : List<InnerClimbingCenter>?{
+class ApiInnerClimbingCenters : InnerClimbingCenterDao {
+    override fun getAll() : List<InnerClimbingCenter>?{
         val outputCenters = mutableListOf<InnerClimbingCenter>()
 
         try {
@@ -70,7 +71,7 @@ class ApiInnerClimbingCenters {
             return null
         }
     }
-    fun insert(obj: InnerClimbingCenter) : Boolean {
+    override fun insert(obj: InnerClimbingCenter) : Boolean {
         val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
         val body = obj.toJSON().toRequestBody(mediaType)
 
@@ -93,6 +94,57 @@ class ApiInnerClimbingCenters {
             }
         } catch (e: Exception) {
             println("Request failed: ${e.message}")
+        }
+        return false
+    }
+    override fun update(obj: InnerClimbingCenter) : Boolean {
+        val id = obj._id ?: return false
+        val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
+        val body = obj.toJSON().toRequestBody(mediaType)
+
+        val request = Request.Builder()
+            .url(DbUtil.climbingCentersPath + "/${id}")
+            .put(body)
+            .addHeader("Authorization", "Bearer ${DbUtil.jwt ?: return false}")
+            .addHeader("Content-Type", "application/json")
+            .build()
+
+        try {
+            val response = DbUtil.client?.newCall(request)?.execute()
+            response.use { res ->
+                if (res != null && res.isSuccessful) {
+                    println("Climbing center updated.")
+                    return true
+                } else {
+                    println("Failed to update climbing center. Code: ${res?.code}")
+                }
+            }
+        } catch (e: Exception) {
+            println("Update request failed: ${e.message}")
+        }
+        return false
+    }
+    override fun delete(obj: InnerClimbingCenter): Boolean {
+        val id = obj._id ?: return false
+
+        val request = Request.Builder()
+            .url(DbUtil.climbingCentersPath + "/${id}")
+            .delete()
+            .addHeader("Authorization", "Bearer ${DbUtil.jwt ?: return false}")
+            .build()
+
+        try {
+            val response = DbUtil.client?.newCall(request)?.execute()
+            response.use { res ->
+                if (res != null && res.isSuccessful) {
+                    println("Climbing center deleted.")
+                    return true
+                } else {
+                    println("Failed to delete climbing center. Code: ${res?.code}")
+                }
+            }
+        } catch (e: Exception) {
+            println("Delete request failed: ${e.message}")
         }
         return false
     }
