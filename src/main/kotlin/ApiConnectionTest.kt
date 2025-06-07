@@ -2,11 +2,18 @@ import dao.api.ApiClimbingSpot
 import dao.api.ApiInnerClimbingCenters
 import db.DbUtil
 import webScraper.InnerClimbingCenter.InnerClimbingCenter
+import webScraper.OutdorSpotsRoutes.ClimbingSpot
 
 fun main() {
     if (!DbUtil.prepareDb()) return
 
     val spotConnection = ApiClimbingSpot()
+    spotConnection.insert(
+        ClimbingSpot(
+            "BolekInLolek2",
+            Pair(45.5,15.0)
+        )
+    )
     spotConnection.getAll()?.forEach { climbingSpot ->
         println(climbingSpot)
         //println(climbingSpot.routes.forEach{ println(it.dateTime)})

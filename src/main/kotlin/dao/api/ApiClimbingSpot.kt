@@ -2,7 +2,9 @@ package dao.api
 
 import dao.ClimbingSpotDao
 import db.DbUtil
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import webScraper.OutdorSpotsRoutes.ClimbingRoute
 import webScraper.OutdorSpotsRoutes.ClimbingSpot
@@ -111,7 +113,29 @@ class ApiClimbingSpot : ClimbingSpotDao {
     }
 
     override fun insert(obj: ClimbingSpot): Boolean {
-        TODO("Not yet implemented")
+        try {
+            val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
+            val body = obj.toJSON().toRequestBody(mediaType)
+            val request = Request.Builder()
+                .url(DbUtil.climbingSpotPath ?: return false)
+                .post(body)
+                .addHeader("Authorization", "Bearer ${DbUtil.jwt ?: return false}")
+                .addHeader("Content-Type", "application/json")
+                .build()
+            val response = DbUtil.client?.newCall(request)?.execute()
+            response.use { res ->
+                if (res != null && res.isSuccessful) {
+                    println("Climbing spot created.")
+                    return true
+                } else {
+                    println("Failed to create climbing spot. Code: ${res?.code}")
+                }
+            }
+        }
+        catch (e: Exception) {
+            println("Request failed: ${e.message}")
+        }
+        return false
     }
 
     override fun update(obj: ClimbingSpot): Boolean {
