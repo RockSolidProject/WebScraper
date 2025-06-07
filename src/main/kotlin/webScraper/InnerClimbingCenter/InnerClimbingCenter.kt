@@ -2,6 +2,7 @@ package webScraper.InnerClimbingCenter
 
 import org.bson.Document
 import org.bson.types.ObjectId
+import org.json.JSONObject
 
 class InnerClimbingCenter(
     var name: String,
@@ -12,26 +13,25 @@ class InnerClimbingCenter(
     val hasMoonboard: Boolean = false,
     val hasSprayWall: Boolean = false,
     val hasKilter: Boolean = false,
-    var owner: String = "000000000000000000000000"
+    var owner: String = "000000000000000000000000",
+    var _id: String? = null
 ){
     override fun toString(): String {
         return "$name ($longitude, $latitude)"
     }
-    fun toDocument(): Document {
-        return Document()
-            .append("name", name)
-            .append("longitude", longitude)
-            .append("latitude", latitude)
-            .append("owner", ObjectId(owner))
-            .append("hasBoulders", hasBoulders)
-            .append("hasRoutes", hasRoutes)
-            .append("hasMoonboard", hasMoonboard)
-            .append("hasSprayWall", hasSprayWall)
-            .append("hasKilter", hasKilter)
-            .append("rating", 0)
-            .append("__v", 0)
-    }
     fun toJSON(): String {
-        return toDocument().toJson()
+        val payload = JSONObject()
+            .put("name",name)
+            .put("latitude", latitude)
+            .put("longitude", longitude)
+            .put("hasBoulders", hasBoulders)
+            .put("hasRoutes", hasRoutes)
+            .put("hasMoonboard", hasMoonboard)
+            .put("hasSprayWall", hasSprayWall)
+            .put("hasKilter", hasKilter)
+            .put("owner", owner)
+
+        return payload.toString()
+
     }
 }

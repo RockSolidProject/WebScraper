@@ -1,7 +1,9 @@
 package dao.api
 
 import db.DbUtil
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import webScraper.InnerClimbingCenter.InnerClimbingCenter
 import java.io.IOException
@@ -37,12 +39,14 @@ class ApiInnerClimbingCenters {
                             val hasMoonboard = element.getBoolean("hasMoonboard")
                             val hasSprayWall = element.getBoolean("hasSprayWall")
                             val hasKilter = element.getBoolean("hasKilter")
+                            val id = element.getString("_id")
                             val owner = element.getJSONObject("owner").getString("_id")
                             outputCenters.add(
                                 InnerClimbingCenter(
                                     name, latitude, longitude, owner = owner, hasBoulders = hasBoulders,
                                     hasRoutes = hasRoutes, hasMoonboard = hasMoonboard,
-                                    hasSprayWall = hasSprayWall, hasKilter = hasKilter
+                                    hasSprayWall = hasSprayWall, hasKilter = hasKilter,
+                                    _id = id
                                 )
                             )
                         } catch (e: Exception) {
@@ -65,5 +69,31 @@ class ApiInnerClimbingCenters {
             println("DB not initialized or unexpected error.")
             return null
         }
+    }
+    fun insert(obj: InnerClimbingCenter) : Boolean {
+        val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
+        val body = obj.toJSON().toRequestBody(mediaType)
+
+        val request = Request.Builder()
+            .url(DbUtil.climbingCentersPath ?: return false)
+            .post(body)
+            .addHeader("Authorization", "Bearer ${DbUtil.jwt ?: return false}")
+            .addHeader("Content-Type", "application/json")
+            .build()
+
+        try {
+            val response = DbUtil.client?.newCall(request)?.execute()
+            response.use { res ->
+                if (res != null && res.isSuccessful) {
+                    println("Climbing center created.")
+                    return true
+                } else {
+                    println("Failed to create climbing center. Code: ${res?.code}")
+                }
+            }
+        } catch (e: Exception) {
+            println("Request failed: ${e.message}")
+        }
+        return false
     }
 }
