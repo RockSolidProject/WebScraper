@@ -8,11 +8,18 @@ fun main() {
     if (!DbUtil.prepareDb()) return
 
     val spotConnection = ApiClimbingSpot()
-    spotConnection.update(
+    /*spotConnection.update(
         ClimbingSpot(
             "P1--",
             coordinates = Pair(45.5,15.0),
             _id = "682e0b7af0706cbadc3dcda7"
+        )
+    )*/
+    spotConnection.delete(
+        ClimbingSpot(
+            "P1--",
+            coordinates = Pair(45.5,15.0),
+            _id = "68449712e48260475b412a9f"
         )
     )
     /*spotConnection.insert(

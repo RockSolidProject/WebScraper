@@ -167,7 +167,27 @@ class ApiClimbingSpot : ClimbingSpotDao {
     } //TODO update routes
 
     override fun delete(obj: ClimbingSpot): Boolean {
-        TODO("Not yet implemented")
+        val id = obj._id ?: return false
+        val request = Request.Builder()
+            .url(DbUtil.climbingSpotPath + "/$id")
+            .delete()
+            .addHeader("Authorization", "Bearer ${DbUtil.jwt ?: return false}")
+            .build()
+        return try {
+            val response = DbUtil.client?.newCall(request)?.execute()
+            response.use { res ->
+                if (res != null && res.isSuccessful) {
+                    println("Climbing spot deleted.")
+                    true
+                } else {
+                    println("Failed to delete climbing spot. Code: ${res?.code}")
+                    false
+                }
+            }
+        } catch (e: Exception) {
+            println("Delete request failed: ${e.message}")
+            false
+        }
     }
 
 }
