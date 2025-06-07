@@ -45,7 +45,7 @@ fun ListClimbingCenter(
             Box(
                 modifier = Modifier
                     .clickable {
-                        // TODO("Shranjevanje v bazo")
+                        //TODO
                     }
                     .background(Color(0xFF0288D1), shape = MaterialTheme.shapes.medium)
                     .padding(horizontal = 16.dp, vertical = 12.dp),

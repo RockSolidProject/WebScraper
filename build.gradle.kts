@@ -19,6 +19,9 @@ dependencies {
     implementation("org.jsoup:jsoup:1.15.4") //Extracting from html
     implementation("org.seleniumhq.selenium:selenium-chrome-driver:4.21.0") //JS-site scrapanje
     implementation("org.jetbrains.compose.material3:material3-desktop:1.5.10") //Za design
+    implementation("org.mongodb:mongodb-driver-sync:4.11.0")
+    implementation("org.json:json:20230618")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
     // Note, if you develop a library, you should use compose.desktop.common.
     // compose.desktop.currentOs should be used in launcher-sourceSet
     // (in a separate module for demo project and in testMain).
