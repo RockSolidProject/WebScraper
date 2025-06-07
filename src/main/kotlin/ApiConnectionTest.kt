@@ -1,8 +1,11 @@
 import dao.api.ApiClimbingSpot
 import dao.api.ApiInnerClimbingCenters
 import db.DbUtil
+import okhttp3.Route
 import webScraper.InnerClimbingCenter.InnerClimbingCenter
+import webScraper.OutdorSpotsRoutes.ClimbingRoute
 import webScraper.OutdorSpotsRoutes.ClimbingSpot
+import webScraper.OutdorSpotsRoutes.RouteType
 
 fun main() {
     if (!DbUtil.prepareDb()) return
@@ -15,20 +18,29 @@ fun main() {
             _id = "682e0b7af0706cbadc3dcda7"
         )
     )*/
-    spotConnection.delete(
+    /*spotConnection.delete(
         ClimbingSpot(
             "P1--",
             coordinates = Pair(45.5,15.0),
             _id = "68449712e48260475b412a9f"
         )
-    )
+    )*/
     /*spotConnection.insert(
         ClimbingSpot(
             "BolekInLolek2",
             Pair(45.5,15.0)
         )
-    )
-    spotConnection.getAll()?.forEach { climbingSpot ->
+    )*/
+    /*val spot = ClimbingSpot(
+            "Marko",
+            Pair(45.5,15.0)
+        )
+    spot.routes.add(ClimbingRoute("marko1",3.0,RouteType.Boulder))
+    spot.routes.add(ClimbingRoute("marko2",3.0,RouteType.Lead))
+
+    spotConnection.insert(spot)*/
+
+    /*spotConnection.getAll()?.forEach { climbingSpot ->
         println(climbingSpot)
         //println(climbingSpot.routes.forEach{ println(it.dateTime)})
     }*/

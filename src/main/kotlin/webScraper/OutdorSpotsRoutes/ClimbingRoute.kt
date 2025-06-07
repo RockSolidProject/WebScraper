@@ -1,5 +1,6 @@
 package webScraper.OutdorSpotsRoutes
 
+import org.json.JSONObject
 import java.time.LocalDateTime
 
 class ClimbingRoute(
@@ -28,5 +29,21 @@ class ClimbingRoute(
         }
         out+= "\n\t\tPostedBy: $postedBy, data time: $dateTime, ID: $_id"
         return out
+    }
+    fun toJSON(spotId : String) : String{
+        val type = when(type) {
+            RouteType.Lead -> "lead"
+            RouteType.Boulder -> "boulder"
+            RouteType.Urban -> "urban"
+        }
+        val payload = JSONObject()
+            .put("name",name)
+            .put("length", length)
+            .put("type", type)
+            .put("climbingArea", spotId)
+            .put("postedBy", postedBy)
+
+
+        return payload.toString()
     }
 }

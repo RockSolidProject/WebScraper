@@ -126,6 +126,12 @@ class ApiClimbingSpot : ClimbingSpotDao {
             response.use { res ->
                 if (res != null && res.isSuccessful) {
                     println("Climbing spot created.")
+
+                    val responseJson = res.body?.string() ?: return false
+                    val json = org.json.JSONObject(responseJson)
+                    val spotId = json.getString("_id")
+                    insertConnectedRoutes(spotId, obj.routes)
+
                     return true
                 } else {
                     println("Failed to create climbing spot. Code: ${res?.code}")
@@ -136,7 +142,34 @@ class ApiClimbingSpot : ClimbingSpotDao {
             println("Request failed: ${e.message}")
         }
         return false
-    }//TODO add conected routes
+    }
+    private fun insertConnectedRoutes(spotId : String,routes : List<ClimbingRoute>) {
+        val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
+        for (route in routes) {
+            try {
+                val body = route.toJSON(spotId).toRequestBody(mediaType)
+
+                val request = Request.Builder()
+                    .url(DbUtil.climbingRoutePath ?: return)  // You must define this path in DbUtil
+                    .post(body)
+                    .addHeader("Authorization", "Bearer ${DbUtil.jwt ?: return}")
+                    .addHeader("Content-Type", "application/json")
+                    .build()
+
+                val response = DbUtil.client?.newCall(request)?.execute()
+
+                response.use { res ->
+                    if (res != null && res.isSuccessful) {
+                        println("Route '${route.name}' inserted.")
+                    } else {
+                        println("Failed to insert route '${route.name}'. Code: ${res?.code}")
+                    }
+                }
+            } catch (e: Exception) {
+                println("Error inserting route '${route.name}': ${e.message}")
+            }
+        }
+    }
 
     override fun update(obj: ClimbingSpot): Boolean {
         val id = obj._id ?: return false
