@@ -99,14 +99,12 @@ class BoulderClimbingScraper {
                     val routes = rows.mapNotNull { row ->
                         val routeName = row.selectFirst("td.name a")?.text()?.trim().orEmpty()
                         val length = row.select("td.ng-star-inserted").getOrNull(1)?.text()?.trim().orEmpty()
-                        val difficulty = row.selectFirst("td.ng-star-inserted app-grade.ng-star-inserted span.grade-name.ng-star-inserted")?.text()?.trim().orEmpty()
 
-                        val lengthNum = length.split(" ")[0].toIntOrNull()
+                        val lengthNum = length.split(" ")[0].toDoubleOrNull()
 
                         if (routeName.isNotEmpty()) {
                             ClimbingRoute(
                                 name = routeName,
-                                difficulty = difficulty,
                                 length = lengthNum,
                                 type = RouteType.Boulder
                             )

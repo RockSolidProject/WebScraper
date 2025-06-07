@@ -1,18 +1,27 @@
+import dao.api.ApiClimbingSpot
 import dao.api.ApiInnerClimbingCenters
 import db.DbUtil
 import webScraper.InnerClimbingCenter.InnerClimbingCenter
 
 fun main() {
     if (!DbUtil.prepareDb()) return
-    val connection = ApiInnerClimbingCenters()
+
+    val spotConnection = ApiClimbingSpot()
+    spotConnection.getAll()?.forEach { climbingSpot ->
+        println(climbingSpot)
+        //println(climbingSpot.routes.forEach{ println(it.dateTime)})
+    }
+
+
+    //val connection = ApiInnerClimbingCenters()
     /*connection.insert(InnerClimbingCenter(
         "Loka",45.0,15.0,true
     ))*/
-    connection.getAll()?.forEach {  climbingCenter ->
+    /*connection.getAll()?.forEach {  climbingCenter ->
         println(climbingCenter)
         //println("ID: ${climbingCenter._id}")
         //println(climbingCenter.owner)
-    }
+    }*/
     /*connection.update(
         InnerClimbingCenter(
         "PK Rogaška+",

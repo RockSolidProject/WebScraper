@@ -1,13 +1,17 @@
 package webScraper.OutdorSpotsRoutes
 
+import java.time.LocalDateTime
+
 class ClimbingRoute(
     val name: String,
-    val difficulty: String,
-    val length: Int?,
-    val type : RouteType
+    val length: Double?,
+    val type : RouteType,
+    val postedBy : String = "000000000000000000000000",
+    var dateTime: LocalDateTime = LocalDateTime.now(),
+    var _id: String? = null
 ){
     override fun toString(): String {
-        var out = "\"$name\", $difficulty,"
+        var out = "\"$name\","
         out += when(type) {
             RouteType.Lead -> "Športna pot, "
             RouteType.Boulder -> "Balvanska pot"
@@ -22,6 +26,7 @@ class ClimbingRoute(
         else {
             "${length}m"
         }
+        out+= "\n\t\tPostedBy: $postedBy, data time: $dateTime, ID: $_id"
         return out
     }
 }

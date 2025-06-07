@@ -1,0 +1,125 @@
+package dao.api
+
+import dao.ClimbingSpotDao
+import db.DbUtil
+import okhttp3.Request
+import org.json.JSONArray
+import webScraper.OutdorSpotsRoutes.ClimbingRoute
+import webScraper.OutdorSpotsRoutes.ClimbingSpot
+import webScraper.OutdorSpotsRoutes.RouteType
+import java.io.IOException
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
+class ApiClimbingSpot : ClimbingSpotDao {
+    val formatter = DateTimeFormatter.ISO_DATE_TIME
+    override fun getAll(): List<ClimbingSpot>? {
+        val outputSpots = mutableListOf<ClimbingSpot>()
+
+        try {
+            val request = Request.Builder()
+                .url(DbUtil.climbingSpotPath!!)
+                .get()
+                .build()
+
+            val response = DbUtil.client!!.newCall(request).execute()
+
+            response.use { res ->
+                if (res.isSuccessful) {
+                    val json = res.body?.string()
+                    if (json == null) {
+                        println("Unexpected server response.")
+                        return null
+                    }
+                    val jsonArray = JSONArray(json)
+                    for (i in 0..<jsonArray.length()) {
+                        try {
+                            val element = jsonArray.getJSONObject(i)
+                            //println(element)
+                            val name = element.getString("name")
+                            val latitude = element.getDouble("latitude")
+                            val longitude = element.getDouble("longitude")
+                            val id = element.getString("_id")
+                            val postedBy = element.getJSONObject("postedBy").getString("_id")
+
+                            val spot = ClimbingSpot(name,Pair(latitude,longitude), postedBy=postedBy, _id = id)
+
+                            val dateTime = element.getString("dateTime")
+                            try {
+                                spot.dateTime = LocalDateTime.parse(dateTime,formatter)
+                            }
+                            catch (e: Exception) {
+                                println("Failed to parse dateTime: ${e.message}")
+                            }
+                            val routesJson = element.getJSONArray("routes")
+                            for (j in 0 ..< routesJson.length()){
+                                try {
+                                    val routeJson = routesJson.getJSONObject(j)
+                                    val routeName = routeJson.getString("name")
+                                    val routeLength = routeJson.getDouble("length")
+                                    val typeString = routeJson.getString("type")
+                                    val routeType = when (typeString){
+                                        "boulder" -> RouteType.Boulder
+                                        "lead" -> RouteType.Lead
+                                        "urban" -> RouteType.Urban
+                                        else -> continue
+                                    }
+                                    val routeDateTimeActual: LocalDateTime;
+                                    val routeDateTime = routeJson.getString("dateTime")
+                                    try {
+                                        routeDateTimeActual = LocalDateTime.parse(routeDateTime,formatter)
+                                    }
+                                    catch (e: Exception) {
+                                        println("Failed to parse routes dateTime: ${e.message}")
+                                        continue
+                                    }
+                                    val routeId = routeJson.getString("_id")
+                                    val routePostedBy = routeJson.getJSONObject("postedBy").getString("_id")
+                                    val route = ClimbingRoute(
+                                        routeName,routeLength,
+                                        routeType,dateTime=routeDateTimeActual,
+                                        _id = routeId, postedBy = routePostedBy
+                                    )
+                                    spot.routes.add(route)
+                                }
+                                catch (e: Exception) {
+                                    println("Invalid route skipped: ${e.message}")
+                                }
+                            }
+
+                            outputSpots.add(spot)
+                        } catch (e: Exception) {
+                            println("Found invalid object continuing: ${e.message}")
+                            continue
+                        }
+                    }
+                    return outputSpots
+                } else {
+                    println("Api call failed response is null")
+                    return null
+                }
+            }
+        }
+        catch (e: IOException) {
+            println("Network error: ${e.message}")
+            return null
+        }
+        catch (e: Exception) {
+            println("DB not initialized or unexpected error.")
+            return null
+        }
+    }
+
+    override fun insert(obj: ClimbingSpot): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun update(obj: ClimbingSpot): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun delete(obj: ClimbingSpot): Boolean {
+        TODO("Not yet implemented")
+    }
+
+}

@@ -13,6 +13,7 @@ object DbUtil {
     var climbingCentersPath: String? = null
     var usersPath: String? = null
     var userLoginPath: String? = null
+    var climbingSpotPath: String? = null
     private var username: String? = null
     private var password: String? = null
     var jwt: String? = null
@@ -25,6 +26,7 @@ object DbUtil {
             climbingCentersPath = backendPath + config.getString("climbingCenters")
             usersPath = backendPath + config.getString("users")
             userLoginPath = usersPath + config.getString("login")
+            climbingSpotPath = backendPath + config.getString("climbingAreas")
             val envConfig = JSONObject(File("src/main/kotlin/db/envConfig.json").readText())
             username=envConfig.getString("username")
             password=envConfig.getString("password")

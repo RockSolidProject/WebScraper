@@ -1,6 +1,7 @@
 {
   "backendApi": "http://localhost:3001",
   "climbingCenters": "/climbingCenter",
+  "climbingAreas": "/climbingAreas",
   "users": "/users",
   "login": "/login"
 }
