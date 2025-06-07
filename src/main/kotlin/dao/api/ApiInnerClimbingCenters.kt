@@ -7,7 +7,7 @@ import webScraper.InnerClimbingCenter.InnerClimbingCenter
 import java.io.IOException
 
 class ApiInnerClimbingCenters {
-    fun list() : List<InnerClimbingCenter>?{
+    fun getAll() : List<InnerClimbingCenter>?{
         val outputCenters = mutableListOf<InnerClimbingCenter>()
 
         try {
@@ -46,7 +46,7 @@ class ApiInnerClimbingCenters {
                                 )
                             )
                         } catch (e: Exception) {
-                            println("Found invalid object continuing.")
+                            println("Found invalid object continuing: ${e.message}")
                             continue
                         }
                     }

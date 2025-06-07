@@ -50,3 +50,5 @@ bin/
 .DS_Store
 /inner_climbing_spots
 /climbing_spots.txt
+/db/.env
+src/main/kotlin/db/envConfig.json
