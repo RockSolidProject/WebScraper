@@ -8,7 +8,14 @@ fun main() {
     if (!DbUtil.prepareDb()) return
 
     val spotConnection = ApiClimbingSpot()
-    spotConnection.insert(
+    spotConnection.update(
+        ClimbingSpot(
+            "P1--",
+            coordinates = Pair(45.5,15.0),
+            _id = "682e0b7af0706cbadc3dcda7"
+        )
+    )
+    /*spotConnection.insert(
         ClimbingSpot(
             "BolekInLolek2",
             Pair(45.5,15.0)
@@ -17,7 +24,8 @@ fun main() {
     spotConnection.getAll()?.forEach { climbingSpot ->
         println(climbingSpot)
         //println(climbingSpot.routes.forEach{ println(it.dateTime)})
-    }
+    }*/
+
 
 
     //val connection = ApiInnerClimbingCenters()

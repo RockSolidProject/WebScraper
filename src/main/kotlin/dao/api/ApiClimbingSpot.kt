@@ -136,11 +136,35 @@ class ApiClimbingSpot : ClimbingSpotDao {
             println("Request failed: ${e.message}")
         }
         return false
-    }
+    }//TODO add conected routes
 
     override fun update(obj: ClimbingSpot): Boolean {
-        TODO("Not yet implemented")
-    }
+        val id = obj._id ?: return false
+        val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
+        val body = obj.toJSON().toRequestBody(mediaType)
+
+        val request = Request.Builder()
+            .url(DbUtil.climbingSpotPath + "/${id}")
+            .put(body)
+            .addHeader("Authorization", "Bearer ${DbUtil.jwt ?: return false}")
+            .addHeader("Content-Type", "application/json")
+            .build()
+        try {
+            val response = DbUtil.client?.newCall(request)?.execute()
+            response.use { res ->
+                if (res != null && res.isSuccessful) {
+                    println("Climbing area updated.")
+                    return true
+                } else {
+                    println("Failed to update climbing area. Code: ${res?.code}")
+                }
+            }
+        }
+        catch (e: Exception) {
+            println("Update request failed: ${e.message}")
+        }
+        return false
+    } //TODO update routes
 
     override fun delete(obj: ClimbingSpot): Boolean {
         TODO("Not yet implemented")

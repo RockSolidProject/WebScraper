@@ -81,8 +81,8 @@ class LeadClimbingScraper{
                     val divided = coordinatesText.split(" ")
                     val latitude = divided.getOrNull(0)?.toDoubleOrNull()
                     val longitude = divided.getOrNull(1)?.toDoubleOrNull()
-                    climbingSpot.coordinates = if (latitude == null || longitude == null) null
-                        else Pair(latitude, longitude)
+                    if (latitude == null || longitude == null) return@map climbingSpot
+                    climbingSpot.coordinates = Pair(latitude, longitude)
                     println("Coordinates: $latitude, $longitude")
                 } else {
                     println("No valid coordinates span found")
