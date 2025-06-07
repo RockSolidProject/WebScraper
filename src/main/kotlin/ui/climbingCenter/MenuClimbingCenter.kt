@@ -8,12 +8,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import dao.InnerClimbingCenterDao
 import webScraper.InnerClimbingCenter.InnerClimbingCenter
 enum class ClimbingCenterState { ADD_CENTER, CENTERS, CENTERS_SCRAPER, CENTERS_GENERATOR }
 @Composable
 fun ClimbingCenter(
     climbingCenters: List<InnerClimbingCenter>,
-    onUpdateCenters: (List<InnerClimbingCenter>) -> Unit
+    onUpdateCenters: (List<InnerClimbingCenter>) -> Unit,
+    dao: InnerClimbingCenterDao
 ) {
     var menuState by remember { mutableStateOf(ClimbingCenterState.CENTERS) }
     Row(Modifier.fillMaxSize()) {
@@ -24,7 +26,6 @@ fun ClimbingCenter(
                 .background(Color(0xFFEEEEEE)),
             verticalArrangement = Arrangement.Top
         ) {
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -32,10 +33,7 @@ fun ClimbingCenter(
                     .clickable { menuState = ClimbingCenterState.CENTERS }
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
-                Text(
-                    "Centers",
-                    modifier = Modifier.padding(8.dp).fillMaxWidth())
-
+                Text("Centers", modifier = Modifier.padding(8.dp).fillMaxWidth())
             }
             Box(
                 modifier = Modifier
@@ -44,10 +42,7 @@ fun ClimbingCenter(
                     .clickable { menuState = ClimbingCenterState.ADD_CENTER }
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
-                Text(
-                    "Add Center",
-                    modifier = Modifier.padding(8.dp).fillMaxWidth())
-
+                Text("Add Center", modifier = Modifier.padding(8.dp).fillMaxWidth())
             }
             Box(
                 modifier = Modifier
@@ -56,10 +51,7 @@ fun ClimbingCenter(
                     .clickable { menuState = ClimbingCenterState.CENTERS_SCRAPER }
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
-                Text(
-                    "Scraper",
-                    modifier = Modifier.padding(8.dp).fillMaxWidth())
-
+                Text("Scraper", modifier = Modifier.padding(8.dp).fillMaxWidth())
             }
             Box(
                 modifier = Modifier
@@ -68,41 +60,40 @@ fun ClimbingCenter(
                     .clickable { menuState = ClimbingCenterState.CENTERS_GENERATOR }
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
-                Text(
-                    "Generator",
-                    modifier = Modifier.padding(8.dp).fillMaxWidth())
-
-
+                Text("Generator", modifier = Modifier.padding(8.dp).fillMaxWidth())
             }
         }
         Column(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight()
-                //.verticalScroll(rememberScrollState())
                 .padding(16.dp)
         ) {
             when (menuState) {
                 ClimbingCenterState.ADD_CENTER -> {
                     AddClimbingCenter(
+                        dao = dao,
                         onAddClimbingCenter = { newCenter ->
                             onUpdateCenters(climbingCenters + newCenter)
                             menuState = ClimbingCenterState.CENTERS
-                        }
+                        },
+                        onNavigateToDefault = { menuState = ClimbingCenterState.CENTERS }
                     )
                 }
 
-                ClimbingCenterState.CENTERS -> ListClimbingCenter(
-                    climbingCenters = climbingCenters,
-                    onUpdate = { updatedCenters -> onUpdateCenters(updatedCenters) }
-                )
+                ClimbingCenterState.CENTERS -> {
+                    ListClimbingCenter(
+                        dao = dao,
+                    )
+                }
 
                 ClimbingCenterState.CENTERS_SCRAPER -> {
                     ScrapeClimbingCenter(
                         onAddCenters = {
                             onUpdateCenters(climbingCenters + it)
                             menuState = ClimbingCenterState.CENTERS
-                        }
+                        },
+                        dao = dao
                     )
                 }
 

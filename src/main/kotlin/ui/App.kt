@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import dao.api.ApiInnerClimbingCenters
 import ui.climbingArea.ClimbingAreas
 import ui.climbingCenter.ClimbingCenter
 import webScraper.InnerClimbingCenter.InnerClimbingCenter
@@ -25,6 +26,7 @@ enum class MenuState { CLIMBING_AREAS, CLIMBING_CENTERS }
 fun App() {
     var climbingCenters by remember { mutableStateOf(listOf<InnerClimbingCenter>()) }
     var menuState by remember { mutableStateOf(MenuState.CLIMBING_AREAS) }
+    val dao = ApiInnerClimbingCenters()
 
     LaunchedEffect(Unit) {
         climbingCenters = listOf(
@@ -100,7 +102,8 @@ fun App() {
                     MenuState.CLIMBING_AREAS -> ClimbingAreas()
                     MenuState.CLIMBING_CENTERS -> ClimbingCenter(
                         climbingCenters = climbingCenters,
-                        onUpdateCenters = { climbingCenters = it }
+                        onUpdateCenters = { climbingCenters = it },
+                        dao = dao
                     )
                 }
             }
