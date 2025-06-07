@@ -26,7 +26,7 @@ fun GridClimbingCenters(
     onDeleteClick: (InnerClimbingCenter) -> Unit
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 150.dp),
+        columns = GridCells.Adaptive(minSize = 250.dp),
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
@@ -75,19 +75,38 @@ fun GridClimbingCenters(
                                 .clickable { onDeleteClick(center) }
                         )
                     }
-                    Column {
-                        Text(
-                            text = "Lat: ${center.latitude}",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = Color.DarkGray,
-                            fontSize = 15.sp
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        val properties = listOf(
+                            "Latitude" to center.latitude.toString(),
+                            "Longitude" to center.longitude.toString(),
+                            "Boulders" to if (center.hasBoulders) "✔" else "✖",
+                            "Routes" to if (center.hasRoutes) "✔" else "✖",
+                            "Moonboard" to if (center.hasMoonboard) "✔" else "✖",
+                            "Spray Wall" to if (center.hasSprayWall) "✔" else "✖",
+                            "Kilter" to if (center.hasKilter) "✔" else "✖"
                         )
-                        Text(
-                            text = "Lng: ${center.longitude}",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = Color.DarkGray,
-                            fontSize = 15.sp
-                        )
+
+                        properties.forEach { (label, value) ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = "$label:",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = Color.DarkGray,
+                                    fontSize = 15.sp
+                                )
+                                Text(
+                                    text = value,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontSize = 15.sp
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -104,6 +123,11 @@ fun EditClimbingCenterDialog(
     var name by remember { mutableStateOf(center.name) }
     var latitude by remember { mutableStateOf(center.latitude.toString()) }
     var longitude by remember { mutableStateOf(center.longitude.toString()) }
+    var hasBoulders by remember { mutableStateOf(center.hasBoulders) }
+    var hasRoutes by remember { mutableStateOf(center.hasRoutes) }
+    var hasMoonboard by remember { mutableStateOf(center.hasMoonboard) }
+    var hasSprayWall by remember { mutableStateOf(center.hasSprayWall) }
+    var hasKilter by remember { mutableStateOf(center.hasKilter) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -131,6 +155,42 @@ fun EditClimbingCenterDialog(
                     label = { Text("Longitude") },
                     modifier = Modifier.fillMaxWidth()
                 )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(
+                        checked = hasBoulders,
+                        onCheckedChange = { hasBoulders = it }
+                    )
+                    Text("Has Boulders")
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(
+                        checked = hasRoutes,
+                        onCheckedChange = { hasRoutes = it }
+                    )
+                    Text("Has Routes")
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(
+                        checked = hasMoonboard,
+                        onCheckedChange = { hasMoonboard = it }
+                    )
+                    Text("Has Moonboard")
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(
+                        checked = hasSprayWall,
+                        onCheckedChange = { hasSprayWall = it }
+                    )
+                    Text("Has Spray Wall")
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(
+                        checked = hasKilter,
+                        onCheckedChange = { hasKilter = it }
+                    )
+                    Text("Has Kilter")
+                }
             }
         },
         confirmButton = {
@@ -140,7 +200,14 @@ fun EditClimbingCenterDialog(
                     val updatedCenter = InnerClimbingCenter(
                         name = name,
                         latitude = latitude.toDoubleOrNull() ?: center.latitude,
-                        longitude = longitude.toDoubleOrNull() ?: center.longitude
+                        longitude = longitude.toDoubleOrNull() ?: center.longitude,
+                        hasBoulders = hasBoulders,
+                        hasRoutes = hasRoutes,
+                        hasMoonboard = hasMoonboard,
+                        hasSprayWall = hasSprayWall,
+                        hasKilter = hasKilter,
+                        _id = center._id,
+                        owner = center.owner
                     )
                     onSave(updatedCenter)
                 }) {

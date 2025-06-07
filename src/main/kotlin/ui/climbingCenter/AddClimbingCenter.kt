@@ -6,11 +6,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import dao.InnerClimbingCenterDao
 import webScraper.InnerClimbingCenter.InnerClimbingCenter
 
 @Composable
 fun AddClimbingCenter(
+    dao: InnerClimbingCenterDao,
     onAddClimbingCenter: (InnerClimbingCenter) -> Unit,
+    onNavigateToDefault: () -> Unit
 ) {
     var name by remember { mutableStateOf("") }
     var latitude by remember { mutableStateOf("") }
@@ -54,11 +57,21 @@ fun AddClimbingCenter(
                 val lng = longitude.toDoubleOrNull()
 
                 if (lat != null && lng != null && name.isNotBlank()) {
-                    onAddClimbingCenter(InnerClimbingCenter(name, lat, lng))
+                    val newCenter = InnerClimbingCenter(name, lat, lng)
+                    println("Attempting to add: $newCenter")
 
-                    name = ""
-                    latitude = ""
-                    longitude = ""
+                    if (dao.insert(newCenter)) {
+                        println("Insert successful")
+                        onAddClimbingCenter(newCenter)
+                        onNavigateToDefault() // Navigate to default page
+                        name = ""
+                        latitude = ""
+                        longitude = ""
+                    } else {
+                        println("Insert failed")
+                    }
+                } else {
+                    println("Invalid input: name='$name', latitude='$latitude', longitude='$longitude'")
                 }
             },
             colors = ButtonDefaults.buttonColors(Color(0xFF01579B))

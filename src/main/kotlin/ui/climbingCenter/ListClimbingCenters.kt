@@ -1,142 +1,124 @@
 package ui.climbingCenter
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import dao.InnerClimbingCenterDao
 import webScraper.InnerClimbingCenter.InnerClimbingCenter
 
 @Preview
 @Composable
 fun ListClimbingCenter(
-    climbingCenters: List<InnerClimbingCenter>,
-    onUpdate: (List<InnerClimbingCenter>) -> Unit
+    dao: InnerClimbingCenterDao
 ) {
+    var climbingCenters by remember { mutableStateOf(dao.getAll() ?: emptyList()) }
     var selectedCenter by remember { mutableStateOf<InnerClimbingCenter?>(null) }
     var isDialogOpen by remember { mutableStateOf(false) }
-    var filteredClimbingCenters by remember { mutableStateOf(climbingCenters) }
     var filterText by remember { mutableStateOf("") }
+    var filterByMoonboard by remember { mutableStateOf(false) }
+    var filterByBoulders by remember { mutableStateOf(false) }
+    var filterByRoutes by remember { mutableStateOf(false) }
+    var filterBySprayWall by remember { mutableStateOf(false) }
+    var filterByKilter by remember { mutableStateOf(false) }
+
+    fun refreshCenters() {
+        climbingCenters = dao.getAll() ?: emptyList()
+    }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            OutlinedTextField(
-                value = filterText,
-                onValueChange = {
-                    filterText = it
-                    filteredClimbingCenters = filterClimbingCenters(climbingCenters, filterText)
-                },
-                label = { Text("Filter") },
-                modifier = Modifier.weight(1f),
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Box(
-                modifier = Modifier
-                    .clickable {
-                        //TODO
-                    }
-                    .background(Color(0xFF0288D1), shape = MaterialTheme.shapes.medium)
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Save to database",
-                    color = Color.White
-                )
-            }
-        }
-        GridClimbingCenters(
-            climbingCenters = filteredClimbingCenters,
-            onCardClick = { center ->
-                selectedCenter = center
-                isDialogOpen = true
+        OutlinedTextField(
+            value = filterText,
+            onValueChange = {
+                filterText = it
             },
-            onDeleteClick = { centerToDelete ->
-                val updatedCenters = climbingCenters.filter { it != centerToDelete }
-                onUpdate(updatedCenters)
-                filteredClimbingCenters = filterClimbingCenters(updatedCenters, filterText)
-            }
+            label = { Text("Filter") },
+            modifier = Modifier.fillMaxWidth()
         )
-    }
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            OutlinedTextField(
-                value = filterText,
-                onValueChange = {
-                    filterText = it
-                    filteredClimbingCenters = filterClimbingCenters(climbingCenters, filterText)
-                },
-                label = { Text("Filter") },
-                modifier = Modifier.weight(1f),
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Box(
-                modifier = Modifier
-                    .clickable {
-                        // TODO("Shranjevanje v bazo")
-                    }
-                    .background(Color(0xFF0288D1), shape = MaterialTheme.shapes.medium)
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Save to database",
-                    color = Color.White
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(
+                    checked = filterByMoonboard,
+                    onCheckedChange = { filterByMoonboard = it }
                 )
+                Text("Moonboard")
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(
+                    checked = filterByBoulders,
+                    onCheckedChange = { filterByBoulders = it }
+                )
+                Text("Boulders")
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(
+                    checked = filterByRoutes,
+                    onCheckedChange = { filterByRoutes = it }
+                )
+                Text("Routes")
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(
+                    checked = filterBySprayWall,
+                    onCheckedChange = { filterBySprayWall = it }
+                )
+                Text("Spray Wall")
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(
+                    checked = filterByKilter,
+                    onCheckedChange = { filterByKilter = it }
+                )
+                Text("Kilter")
             }
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         GridClimbingCenters(
-            climbingCenters = filteredClimbingCenters,
+            climbingCenters = climbingCenters.filter {
+                (!filterByMoonboard || it.hasMoonboard) &&
+                        (!filterByBoulders || it.hasBoulders) &&
+                        (!filterByRoutes || it.hasRoutes) &&
+                        (!filterBySprayWall || it.hasSprayWall) &&
+                        (!filterByKilter || it.hasKilter) &&
+                        (it.name.contains(filterText, true) ||
+                                it.latitude.toString().contains(filterText, true) ||
+                                it.longitude.toString().contains(filterText, true))
+            },
             onCardClick = { center ->
+                println("Card clicked: $center") // Debugging
                 selectedCenter = center
                 isDialogOpen = true
             },
             onDeleteClick = { centerToDelete ->
-                val updatedCenters = climbingCenters.filter { it != centerToDelete }
-                onUpdate(updatedCenters)
-                filteredClimbingCenters = filterClimbingCenters(updatedCenters, filterText)
+                dao.delete(centerToDelete)
+                refreshCenters()
             }
         )
     }
 
     if (isDialogOpen && selectedCenter != null) {
+        println("sdads")
         EditClimbingCenterDialog(
             center = selectedCenter!!,
             onDismiss = { isDialogOpen = false },
             onSave = { updatedCenter ->
-                val updatedCenters = climbingCenters.map {
-                    if (it == selectedCenter) updatedCenter else it
-                }
-                onUpdate(updatedCenters)
-                filteredClimbingCenters = filterClimbingCenters(updatedCenters, filterText)
+                dao.update(updatedCenter)
+                refreshCenters()
                 isDialogOpen = false
             }
         )
-    }
-}
-
-fun filterClimbingCenters(climbingCenters: List<InnerClimbingCenter>, filterText: String): List<InnerClimbingCenter>{
-    if (filterText == "" || climbingCenters.isEmpty()) return climbingCenters
-    return climbingCenters.filter {it.name.contains(filterText, true) ||
-            it.latitude.toString().contains(filterText, true) ||
-            it.longitude.toString().contains(filterText, true)
     }
 }
