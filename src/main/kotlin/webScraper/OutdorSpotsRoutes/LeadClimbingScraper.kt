@@ -81,8 +81,8 @@ class LeadClimbingScraper{
                     val divided = coordinatesText.split(" ")
                     val latitude = divided.getOrNull(0)?.toDoubleOrNull()
                     val longitude = divided.getOrNull(1)?.toDoubleOrNull()
-                    climbingSpot.coordinates = if (latitude == null || longitude == null) null
-                        else Pair(latitude, longitude)
+                    if (latitude == null || longitude == null) return@map climbingSpot
+                    climbingSpot.coordinates = Pair(latitude, longitude)
                     println("Coordinates: $latitude, $longitude")
                 } else {
                     println("No valid coordinates span found")
@@ -99,14 +99,12 @@ class LeadClimbingScraper{
                     val routes = rows.mapNotNull { row ->
                         val routeName = row.selectFirst("td.name a")?.text()?.trim().orEmpty()
                         val length = row.select("td.ng-star-inserted").getOrNull(1)?.text()?.trim().orEmpty()
-                        val difficulty = row.selectFirst("td.ng-star-inserted app-grade.ng-star-inserted span.grade-name.ng-star-inserted")?.text()?.trim().orEmpty()
 
-                        val lengthNum = length.split(" ")[0].toIntOrNull()
+                        val lengthNum = length.split(" ")[0].toDoubleOrNull()
 
                         if (routeName.isNotEmpty()) {
                             ClimbingRoute(
                                 name = routeName,
-                                difficulty = difficulty,
                                 length = lengthNum,
                                 type = RouteType.Lead
                             )
