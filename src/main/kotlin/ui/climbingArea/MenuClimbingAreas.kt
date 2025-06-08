@@ -94,7 +94,9 @@ fun ClimbingAreas() {
                 }
 
                 ClimbingAreaState.AREAS_SCRAPER -> {
-                    ScrapeClimbingArea()
+                    ScrapeClimbingArea(
+                        onAddAreas = {println("onAddAreas")},
+                    )
                 }
 
                 ClimbingAreaState.AREAS_GENERATOR -> {

@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import webScraper.OutdorSpotsRoutes.ClimbingRoute
 import webScraper.OutdorSpotsRoutes.ClimbingSpot
 import webScraper.OutdorSpotsRoutes.RouteType
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 
 
 @Composable
@@ -138,14 +140,23 @@ fun EditClimbingAreaDialog(
                     label = { Text("Longitude") },
                     modifier = Modifier.fillMaxWidth(),
                 )
-
-                routes.forEachIndexed { index, route ->
-                    EditableRouteRow(
-                        route = routes[index],
-                        onUpdate = { updated -> routes[index] = updated },
-                        onDelete = { routes = routes.toMutableList().also { it.removeAt(index) } },
-                        //updateRoutes = {}
-                    )
+                Spacer(modifier = Modifier.height(8.dp))
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 300.dp) // omeji višino, da omogoči scrollanje, lahko nastaviš poljubno
+                ) {
+                    itemsIndexed(routes) { index, route ->
+                        EditableRouteRow(
+                            route = route,
+                            onUpdate = { updatedRoute ->
+                                routes = routes.toMutableList().also { it[index] = updatedRoute }
+                            },
+                            onDelete = {
+                                routes = routes.toMutableList().also { it.removeAt(index) }
+                            }
+                        )
+                    }
                 }
                 Button(
                     onClick = {
