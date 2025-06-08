@@ -14,7 +14,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class ApiClimbingSpot : ClimbingSpotDao {
-    val formatter = DateTimeFormatter.ISO_DATE_TIME
+    private val formatter = DateTimeFormatter.ISO_DATE_TIME
     override fun getAll(): List<ClimbingSpot>? {
         val outputSpots = mutableListOf<ClimbingSpot>()
 
@@ -66,7 +66,7 @@ class ApiClimbingSpot : ClimbingSpotDao {
                                         "urban" -> RouteType.Urban
                                         else -> continue
                                     }
-                                    val routeDateTimeActual: LocalDateTime;
+                                    val routeDateTimeActual: LocalDateTime
                                     val routeDateTime = routeJson.getString("dateTime")
                                     try {
                                         routeDateTimeActual = LocalDateTime.parse(routeDateTime,formatter)
@@ -170,6 +170,42 @@ class ApiClimbingSpot : ClimbingSpotDao {
             }
         }
     }
+    private fun setConnectedRoutes(spotId : String,routes : List<ClimbingRoute>) {
+        val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
+        try {
+            val payload = org.json.JSONObject()
+            payload.put("climbingArea", spotId)
+
+            val routesArray = JSONArray()
+            for (route in routes) {
+                try {
+                    val routeJson = route.toJsonID(spotId)
+                    routesArray.put(routeJson)
+                } catch (e: Exception) {
+                    println("Error serializing route '${route.name}': ${e.message}")
+                }
+            }
+            payload.put("routes", routesArray)
+            val request = Request.Builder()
+                .url(DbUtil.climbingRoutePath ?: return) // this is the backend sync endpoint
+                .put(payload.toString().toRequestBody(mediaType))
+                .addHeader("Authorization", "Bearer ${DbUtil.jwt ?: return}")
+                .addHeader("Content-Type", "application/json")
+                .build()
+
+            val response = DbUtil.client?.newCall(request)?.execute()
+            response.use { res ->
+                if (res != null && res.isSuccessful) {
+                    println("Routes synced with backend.")
+                } else {
+                    println("Failed to sync routes. Code: ${res?.code}")
+                }
+            }
+        }
+        catch (e: Exception) {
+            println("Error inserting route: ${e.message}")
+        }
+    }
 
     override fun update(obj: ClimbingSpot): Boolean {
         val id = obj._id ?: return false
@@ -187,6 +223,7 @@ class ApiClimbingSpot : ClimbingSpotDao {
             response.use { res ->
                 if (res != null && res.isSuccessful) {
                     println("Climbing area updated.")
+                    setConnectedRoutes(obj._id!!,obj.routes)
                     return true
                 } else {
                     println("Failed to update climbing area. Code: ${res?.code}")
@@ -197,7 +234,7 @@ class ApiClimbingSpot : ClimbingSpotDao {
             println("Update request failed: ${e.message}")
         }
         return false
-    } //TODO update routes
+    }
 
     override fun delete(obj: ClimbingSpot): Boolean {
         val id = obj._id ?: return false

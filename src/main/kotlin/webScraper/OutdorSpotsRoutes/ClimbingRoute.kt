@@ -46,4 +46,21 @@ class ClimbingRoute(
 
         return payload.toString()
     }
+    fun toJsonID(spotId : String) : String{
+        val type = when(type) {
+            RouteType.Lead -> "lead"
+            RouteType.Boulder -> "boulder"
+            RouteType.Urban -> "urban"
+        }
+        val payload = JSONObject()
+            .put("name",name)
+            .put("length", length)
+            .put("type", type)
+            .put("climbingArea", spotId)
+            .put("postedBy", postedBy)
+        if (_id != null)
+            payload.put("_id",_id)
+
+        return payload.toString()
+    }
 }

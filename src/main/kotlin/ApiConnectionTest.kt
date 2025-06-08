@@ -11,6 +11,18 @@ fun main() {
     if (!DbUtil.prepareDb()) return
 
     val spotConnection = ApiClimbingSpot()
+
+    val spot = ClimbingSpot(
+        "Marko++",
+        Pair(45.6,15.0),
+        _id = "6844c0040ac2cce44d906bf5"
+    )
+    spot.routes.add(ClimbingRoute("marko2",5.0,RouteType.Boulder, _id = "68452fb8e1f89aa6937d2227"))
+    spot.routes.add(ClimbingRoute("marko5",6.0,RouteType.Lead))
+
+
+    spotConnection.update(spot)
+
     /*spotConnection.update(
         ClimbingSpot(
             "P1--",
