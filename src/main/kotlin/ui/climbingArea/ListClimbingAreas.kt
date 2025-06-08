@@ -2,27 +2,32 @@ package ui.climbingArea
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Slider
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import dao.api.ApiClimbingSpot
+import ui.climbin.EditClimbingAreaDialog
 import ui.climbin.GridClimbingAreas
+import webScraper.OutdorSpotsRoutes.ClimbingRoute
+import webScraper.OutdorSpotsRoutes.ClimbingSpot
+import webScraper.OutdorSpotsRoutes.RouteType
 
 
 @Preview
 @Composable
 fun ListClimbingAreas() {
     val dao = ApiClimbingSpot()
-
+    var selectedArea by remember {mutableStateOf<ClimbingSpot?>(null)}
     var climbingSpots by remember { mutableStateOf(dao.getAll() ?: emptyList()) }
     var filteredSpots by remember { mutableStateOf(dao.getAll() ?: emptyList()) }
     println(climbingSpots)
     var filterText by remember { mutableStateOf("") }
-
+    var isDialogOpen by remember { mutableStateOf(false) }
     var minRoutes by remember { mutableStateOf(0f) }
     var minRoutesText by remember { mutableStateOf(minRoutes.toInt().toString()) }
     fun refreshClimbingSpots() {
@@ -30,14 +35,14 @@ fun ListClimbingAreas() {
     }
 
 
-    Column (modifier = Modifier.fillMaxSize().padding(16.dp)){
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         OutlinedTextField(
             value = filterText,
             onValueChange = {
                 filterText = it
             },
             label = { Text("Filter") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().weight(1f),
         )
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -58,7 +63,7 @@ fun ListClimbingAreas() {
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
         ) {
             Text(
                 "Minimum number of routes:",
@@ -77,16 +82,30 @@ fun ListClimbingAreas() {
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Box(modifier = Modifier.weight(1f)) {
-            GridClimbingAreas(
-                climbingAreas = filteredSpots
-            )
-        }
+        GridClimbingAreas(
+            climbingAreas = filteredSpots,
+            onCardClick = { area ->
+                println("Card clicked: $area")
+                selectedArea = area
+                isDialogOpen = true
+            }
+        )
 
     }
-
-
+    if(isDialogOpen && selectedArea != null) {
+        EditClimbingAreaDialog(
+            area = selectedArea!!,
+            onDismiss = { isDialogOpen = false },
+            onSave={ updatedArea ->
+                dao.update(updatedArea)
+                refreshClimbingSpots()
+                isDialogOpen = false
+            }
+        )
+    }
 
 
     //Text("List", modifier = Modifier.padding(8.dp))
 }
+
+

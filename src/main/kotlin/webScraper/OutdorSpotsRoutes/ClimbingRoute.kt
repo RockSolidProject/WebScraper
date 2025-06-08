@@ -3,9 +3,9 @@ package webScraper.OutdorSpotsRoutes
 import org.json.JSONObject
 import java.time.LocalDateTime
 
-class ClimbingRoute(
+data class ClimbingRoute(
     val name: String,
-    val length: Double?,
+    var length: Double?,
     val type : RouteType,
     val postedBy : String = "000000000000000000000000",
     var dateTime: LocalDateTime = LocalDateTime.now(),
