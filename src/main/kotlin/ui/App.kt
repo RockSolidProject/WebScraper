@@ -101,8 +101,6 @@ fun App() {
                 when (menuState) {
                     MenuState.CLIMBING_AREAS -> ClimbingAreas()
                     MenuState.CLIMBING_CENTERS -> ClimbingCenter(
-                        climbingCenters = climbingCenters,
-                        onUpdateCenters = { climbingCenters = it },
                         dao = dao
                     )
                 }
