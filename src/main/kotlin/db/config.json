@@ -1,5 +1,5 @@
 {
-  "backendApi": "http://127.0.0.1:3001",
+  "backendApi": "http://172.205.210.219/api",
   "climbingCenters": "/climbingCenter",
   "climbingAreas": "/climbingAreas",
   "climbingRoutes": "/climbingRoutes",

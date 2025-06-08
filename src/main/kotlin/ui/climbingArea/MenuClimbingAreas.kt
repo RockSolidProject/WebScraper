@@ -10,13 +10,17 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import dao.api.ApiClimbingSpot
 import ui.climbingCenter.ClimbingCenterState
+import webScraper.OutdorSpotsRoutes.ClimbingSpot
 
 enum class ClimbingAreaState { ADD_AREAS, AREAS, AREAS_SCRAPER, AREAS_GENERATOR }
 @Composable
 fun ClimbingAreas() {
+    var dao = ApiClimbingSpot()
     Row(Modifier.fillMaxSize()) {
         //levi meni
+
         var menuState by remember {mutableStateOf(ClimbingAreaState.AREAS)}
         Column(
             modifier = Modifier
@@ -95,7 +99,9 @@ fun ClimbingAreas() {
 
                 ClimbingAreaState.AREAS_SCRAPER -> {
                     ScrapeClimbingArea(
-                        onAddAreas = {println("onAddAreas")},
+                        onAddAreas = {
+                            menuState = ClimbingAreaState.AREAS
+                        },
                     )
                 }
 

@@ -37,7 +37,7 @@ fun ScrapeClimbingArea(
     LaunchedEffect(Unit) {
         isLoading = true
         spots = withContext(Dispatchers.IO) {
-            LeadClimbingScraper().scrapeAllClimbingSpots(4)
+            LeadClimbingScraper().scrapeAllClimbingSpots()
         }
         filteredSpots = spots
         isLoading = false
