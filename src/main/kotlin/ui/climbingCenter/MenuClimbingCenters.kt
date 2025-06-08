@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import dao.InnerClimbingCenterDao
-import webScraper.InnerClimbingCenter.InnerClimbingCenter
 enum class ClimbingCenterState { ADD_CENTER, CENTERS, CENTERS_SCRAPER, CENTERS_GENERATOR }
 @Composable
 fun ClimbingCenter(

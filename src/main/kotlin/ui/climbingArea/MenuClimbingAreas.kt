@@ -10,13 +10,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import ui.climbingCenter.ClimbingCenterState
 
 enum class ClimbingAreaState { ADD_AREAS, AREAS, AREAS_SCRAPER, AREAS_GENERATOR }
 @Composable
 fun ClimbingAreas() {
-    var menuState by remember { mutableStateOf(ClimbingAreaState.AREAS) }
     Row(Modifier.fillMaxSize()) {
         //levi meni
+        var menuState by remember {mutableStateOf(ClimbingAreaState.AREAS)}
         Column(
             modifier = Modifier
                 .width(200.dp)
@@ -83,7 +84,9 @@ fun ClimbingAreas() {
         ) {
             when (menuState) {
                 ClimbingAreaState.ADD_AREAS -> {
-                    AddClimbingArea()
+                    AddClimbingArea(
+                        onNavigateToDefault = { menuState = ClimbingAreaState.AREAS }
+                    )
                 }
 
                 ClimbingAreaState.AREAS -> {

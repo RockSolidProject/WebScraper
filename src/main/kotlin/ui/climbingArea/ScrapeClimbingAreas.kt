@@ -7,7 +7,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ScrapeClimbingArea() {
+fun ScrapeClimbingArea(
+
+) {
     Text("Scrape", modifier = Modifier.padding(8.dp))
 
 }
