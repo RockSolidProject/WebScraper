@@ -11,12 +11,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import dao.InnerClimbingCenterDao
 import webScraper.InnerClimbingCenter.InnerClimbingCenter
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 @Composable
 fun GenerateClimbingCenters(
+    dao: InnerClimbingCenterDao,
     onGenerate: (List<InnerClimbingCenter>) -> Unit
 ) {
     var itemCount by remember { mutableStateOf("") }
@@ -59,13 +61,15 @@ fun GenerateClimbingCenters(
         Button(
             onClick = {
                 println("Generating $itemCount items")
-                onGenerate(generateWithParameters(
+                val generated = generateWithParameters(
                     itemCount.toInt(),
                     minLatitude.toDoubleOrNull(),
                     maxLatitude.toDoubleOrNull(),
                     minLongitude.toDoubleOrNull(),
                     maxLongitude.toDoubleOrNull()
-                ))
+                )
+                val successfullyAdded = generated.filter { dao.insert(it) }
+                onGenerate(successfullyAdded)
             },
             colors = ButtonDefaults.buttonColors(Color(0xFF01579B)),
             modifier = Modifier.padding(top = 16.dp)
@@ -85,10 +89,10 @@ fun generateWithParameters(
 
     val random = java.util.Random()
 
-    val finalMinLat = minLatitude ?: 13.979428685808415 //default
-    val finalMaxLat = maxLatitude ?: 15.650946721725376
-    val finalMinLon = minLongitude ?: 45.68893209292477
-    val finalMaxLon = maxLongitude ?: 46.34826314805122
+    val finalMinLat = minLatitude ?: 45.68893209292477 //default
+    val finalMaxLat = maxLatitude ?: 46.34826314805122
+    val finalMinLon = minLongitude ?: 13.979428685808415
+    val finalMaxLon = maxLongitude ?: 15.650946721725376
 
     val namePool = listOf(
         "Plezalni center", "Osnovna šola", "Športni center", "Plezališče",
@@ -127,7 +131,12 @@ fun generateWithParameters(
             InnerClimbingCenter(
                 name = name,
                 latitude = BigDecimal(lat).setScale(4, RoundingMode.HALF_UP).toDouble(),
-                longitude = BigDecimal(lon).setScale(4, RoundingMode.HALF_UP).toDouble()
+                longitude = BigDecimal(lon).setScale(4, RoundingMode.HALF_UP).toDouble(),
+                hasKilter = random.nextBoolean(),
+                hasRoutes = random.nextBoolean(),
+                hasMoonboard = random.nextBoolean(),
+                hasBoulders = random.nextBoolean(),
+                hasSprayWall = random.nextBoolean(),
             )
         )
     }

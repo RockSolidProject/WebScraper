@@ -13,8 +13,6 @@ import webScraper.InnerClimbingCenter.InnerClimbingCenter
 enum class ClimbingCenterState { ADD_CENTER, CENTERS, CENTERS_SCRAPER, CENTERS_GENERATOR }
 @Composable
 fun ClimbingCenter(
-    climbingCenters: List<InnerClimbingCenter>,
-    onUpdateCenters: (List<InnerClimbingCenter>) -> Unit,
     dao: InnerClimbingCenterDao
 ) {
     var menuState by remember { mutableStateOf(ClimbingCenterState.CENTERS) }
@@ -73,8 +71,7 @@ fun ClimbingCenter(
                 ClimbingCenterState.ADD_CENTER -> {
                     AddClimbingCenter(
                         dao = dao,
-                        onAddClimbingCenter = { newCenter ->
-                            onUpdateCenters(climbingCenters + newCenter)
+                        onAddClimbingCenter = {
                             menuState = ClimbingCenterState.CENTERS
                         },
                         onNavigateToDefault = { menuState = ClimbingCenterState.CENTERS }
@@ -90,7 +87,6 @@ fun ClimbingCenter(
                 ClimbingCenterState.CENTERS_SCRAPER -> {
                     ScrapeClimbingCenter(
                         onAddCenters = {
-                            onUpdateCenters(climbingCenters + it)
                             menuState = ClimbingCenterState.CENTERS
                         },
                         dao = dao
@@ -100,9 +96,9 @@ fun ClimbingCenter(
                 ClimbingCenterState.CENTERS_GENERATOR -> {
                     GenerateClimbingCenters(
                         onGenerate = {
-                            onUpdateCenters(climbingCenters + it)
                             menuState = ClimbingCenterState.CENTERS
-                        }
+                        },
+                        dao = dao
                     )
                 }
             }
