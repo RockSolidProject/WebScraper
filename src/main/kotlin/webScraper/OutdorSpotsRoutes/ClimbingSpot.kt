@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class ClimbingSpot(
-    val name: String,
+    var name: String,
     var coordinates: Pair<Double, Double> = Pair(0.0,0.0),
     var routes: MutableList<ClimbingRoute> = mutableListOf(),
     var dateTime: LocalDateTime = LocalDateTime.now(),
