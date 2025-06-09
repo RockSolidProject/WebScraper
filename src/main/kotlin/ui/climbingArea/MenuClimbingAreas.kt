@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import dao.api.ApiClimbingSpot
+import ui.climbin.GenerateClimbingAreas
 import ui.climbingCenter.ClimbingCenterState
 import webScraper.OutdorSpotsRoutes.ClimbingSpot
 
@@ -106,7 +107,11 @@ fun ClimbingAreas() {
                 }
 
                 ClimbingAreaState.AREAS_GENERATOR -> {
-                    GenerateClimbingArea()
+                    GenerateClimbingAreas(
+                        onGenerate = { newAreas ->
+                            menuState = ClimbingAreaState.AREAS
+                        }
+                    )
                 }
             }
         }
