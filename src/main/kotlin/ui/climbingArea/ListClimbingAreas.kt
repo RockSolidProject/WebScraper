@@ -80,8 +80,8 @@ fun ListClimbingAreas() {
                     return@filter nameMatch && routeCountMatch
                 }
             },
-            valueRange = 0f..10f,
-            steps = 9,
+            valueRange = 0f..100f,
+            steps = 19,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -99,8 +99,9 @@ fun ListClimbingAreas() {
                 onValueChange = {
                     minRoutesText = it
                     it.toIntOrNull()?.let { num ->
-                        minRoutes = num.toFloat().coerceIn(0f, 100f)
+                        minRoutes = num.toFloat().coerceIn(0f, 400f)
                     }
+                    refreshClimbingSpots()
                 },
                 modifier = Modifier.height(50.dp).width(60.dp), // mali input
                 singleLine = true

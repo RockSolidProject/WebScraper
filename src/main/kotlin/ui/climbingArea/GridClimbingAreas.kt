@@ -22,6 +22,9 @@ import webScraper.OutdorSpotsRoutes.ClimbingSpot
 import webScraper.OutdorSpotsRoutes.RouteType
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.ui.unit.sp
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 
 @Composable
@@ -83,6 +86,36 @@ fun GridClimbingAreas(
                                 .padding(start = 8.dp)
                                 .clickable { onDeleteClick(area) }
                         )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        val properties = listOf(
+                            "Latitude" to BigDecimal(area.coordinates.first).setScale(6, RoundingMode.HALF_UP).toDouble(),
+                            "Longitude" to BigDecimal(area.coordinates.second).setScale(6, RoundingMode.HALF_UP).toDouble(),
+                            "Number of routes" to area.routes.size.toString(),
+                        )
+
+                        properties.forEach { (label, value) ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = "$label:",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = Color.DarkGray,
+                                    fontSize = 15.sp
+                                )
+                                Text(
+                                    text = value.toString(),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontSize = 15.sp
+                                )
+                            }
+                        }
                     }
                 }
             }

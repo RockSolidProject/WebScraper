@@ -23,6 +23,7 @@ fun GenerateClimbingAreas(
     var maxLatitude by remember { mutableStateOf("") }
     var minLongitude by remember { mutableStateOf("") }
     var maxLongitude by remember { mutableStateOf("") }
+    var routeNumber by remember { mutableStateOf("0") }
 
     Column(modifier = Modifier.padding(16.dp)) {
         OutlinedTextField(
@@ -55,6 +56,12 @@ fun GenerateClimbingAreas(
             label = { Text("Max Longitude") },
             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
         )
+        OutlinedTextField(
+            value = routeNumber,
+            onValueChange = { routeNumber = it },
+            label = { Text("Route Number") },
+            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+        )
 
         Button(
             onClick = {
@@ -63,7 +70,9 @@ fun GenerateClimbingAreas(
                     minLatitude = minLatitude.toDoubleOrNull(),
                     maxLatitude = maxLatitude.toDoubleOrNull(),
                     minLongitude = minLongitude.toDoubleOrNull(),
-                    maxLongitude = maxLongitude.toDoubleOrNull()
+                    maxLongitude = maxLongitude.toDoubleOrNull(),
+                    routeNumber = routeNumber.toIntOrNull(),
+
                 )
                 val successfullyAdded = generated.filter {dao.insert(it)}
                 onGenerate(generated)
@@ -81,24 +90,28 @@ fun generateClimbingAreas(
     minLatitude: Double? = null,
     maxLatitude: Double? = null,
     minLongitude: Double? = null,
-    maxLongitude: Double? = null
+    maxLongitude: Double? = null,
+    routeNumber: Int? = null,
+
 ): List<ClimbingSpot> {
     val random = Random(System.currentTimeMillis())
     val finalMinLat = minLatitude ?: 45.7
     val finalMaxLat = maxLatitude ?: 46.3
     val finalMinLon = minLongitude ?: 13.9
     val finalMaxLon = maxLongitude ?: 15.6
+    val finalRouteNumber = routeNumber ?: 5
 
-    val namePool = listOf("Osp", "Mišja Peč", "Čreta", "Kamnitnik", "Mali Princ", "Kotečnik", "Bohinjska Bela")
+
     val generated = mutableListOf<ClimbingSpot>()
 
-    repeat(number) {
-        val name = namePool.random() + " " + ('A'..'Z').random()
+    repeat(number) { index ->
+        val name = "Generated Area (${index + 1})" // <-- tukaj dodaš zaporedno številko
+
         val lat = finalMinLat + (finalMaxLat - finalMinLat) * random.nextDouble()
         val lon = finalMinLon + (finalMaxLon - finalMinLon) * random.nextDouble()
-        val routes = List(random.nextInt(1, 6)) { index ->
+        val routes = List(finalRouteNumber) { routeIndex ->
             ClimbingRoute(
-                name = "Route ${index + 1}",
+                name = "Route ${routeIndex + 1}",
                 length = listOf(10.0, 20.0, 30.0, null).random(),
                 type = RouteType.entries.random()
             )

@@ -18,6 +18,7 @@ import dao.api.ApiClimbingSpot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ui.climbin.EditClimbingAreaDialog
+import ui.climbin.GridClimbingAreas
 import webScraper.OutdorSpotsRoutes.ClimbingSpot
 import webScraper.OutdorSpotsRoutes.LeadClimbingScraper
 
@@ -37,7 +38,7 @@ fun ScrapeClimbingArea(
     LaunchedEffect(Unit) {
         isLoading = true
         spots = withContext(Dispatchers.IO) {
-            LeadClimbingScraper().scrapeAllClimbingSpots(4)
+            LeadClimbingScraper().scrapeAllClimbingSpots()
         }
         filteredSpots = spots
         isLoading = false
@@ -45,7 +46,9 @@ fun ScrapeClimbingArea(
 
     LaunchedEffect(filterText) {
         filteredSpots = spots.filter {
-            it.name.contains(filterText, ignoreCase = true) || it.coordinates.first.toString().contains(filterText, ignoreCase = true) || it.coordinates.second.toString().contains(filterText, ignoreCase = true)
+            it.name.contains(filterText, ignoreCase = true) ||
+                    it.coordinates.first.toString().contains(filterText, ignoreCase = true) ||
+                    it.coordinates.second.toString().contains(filterText, ignoreCase = true)
         }
     }
 
@@ -58,7 +61,7 @@ fun ScrapeClimbingArea(
         }
     } else {
         Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-            Text(text="num of filtered ${filteredSpots.size}")
+            Text(text = "Filtered areas: ${filteredSpots.size}")
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -83,52 +86,18 @@ fun ScrapeClimbingArea(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 250.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxWidth().height(300.dp)
-            ) {
-                println(filteredSpots)
-                items(filteredSpots) { spot ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                selectedSpot = spot
-                                isDialogOpen = true
-                            },
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFE1F5FE)),
-                        shape = MaterialTheme.shapes.medium,
-                        elevation = CardDefaults.cardElevation(6.dp),
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            verticalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = spot.name ?: "unknown",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = Color(0xFF01579B),
-                                maxLines = 3
-                            )
-                            Text(
-                                text = "Lat: ${spot.coordinates.first}, Lon: ${spot.coordinates.second}",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                            IconButton(
-                                onClick = {
-                                    spots = spots.filter { it != spot }
-                                    filteredSpots = filteredSpots.filter { it != spot }
-                                },
-                                modifier = Modifier.align(Alignment.End)
-                            ) {
-                                Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color.Red)
-                            }
-                        }
-                    }
+            // ⬇️ Reuse your styled UI
+            GridClimbingAreas (
+                climbingAreas = filteredSpots,
+                onCardClick = {
+                    selectedSpot = it
+                    isDialogOpen = true
+                },
+                onDeleteClick = { toDelete ->
+                    spots = spots.filter { it != toDelete }
+                    filteredSpots = filteredSpots.filter { it != toDelete }
                 }
-            }
+            )
         }
 
         if (isDialogOpen && selectedSpot != null) {
@@ -144,3 +113,4 @@ fun ScrapeClimbingArea(
         }
     }
 }
+
