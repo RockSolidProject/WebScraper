@@ -29,7 +29,7 @@ fun GridClimbingAreas(
     modifier: Modifier = Modifier,
     climbingAreas: List<ClimbingSpot>,
     onCardClick: (ClimbingSpot) -> Unit = { println("onCardClick: $it") },
-    onDeleteClick: (ClimbingSpot) -> Unit = { println("onDeleteClick: $it") },
+    onDeleteClick: (ClimbingSpot) -> Unit ,
 ) {
 
     LazyVerticalGrid(

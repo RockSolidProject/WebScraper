@@ -32,6 +32,20 @@ fun ListClimbingAreas() {
     var minRoutesText by remember { mutableStateOf(minRoutes.toInt().toString()) }
     fun refreshClimbingSpots() {
         climbingSpots = dao.getAll() ?: emptyList()
+        filteredSpots = climbingSpots.filter{ spot ->
+            val nameMatch = spot.name.contains(filterText, ignoreCase = true)
+            val routeCountMatch = spot.routes.size >= minRoutes.toInt()
+            return@filter nameMatch && routeCountMatch
+
+        }
+    }
+    fun filterSpots() {
+        filteredSpots = climbingSpots.filter{ spot ->
+            val nameMatch = spot.name.contains(filterText, ignoreCase = true)
+            val routeCountMatch = spot.routes.size >= minRoutes.toInt()
+            return@filter nameMatch && routeCountMatch
+
+        }
     }
 
 
@@ -40,9 +54,15 @@ fun ListClimbingAreas() {
             value = filterText,
             onValueChange = {
                 filterText = it
+                filteredSpots = climbingSpots.filter{ spot ->
+                    val nameMatch = spot.name.contains(filterText, ignoreCase = true)
+                    val routeCountMatch = spot.routes.size >= minRoutes.toInt()
+                    return@filter nameMatch && routeCountMatch
+
+                }
             },
             label = { Text("Filter") },
-            modifier = Modifier.fillMaxWidth().weight(1f),
+            modifier = Modifier.fillMaxWidth(),
         )
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -54,6 +74,11 @@ fun ListClimbingAreas() {
                 val snapped = it.toInt().toFloat()
                 minRoutes = snapped
                 minRoutesText = it.toInt().toString()
+                filteredSpots = climbingSpots.filter{ spot ->
+                    val nameMatch = spot.name.contains(filterText, ignoreCase = true)
+                    val routeCountMatch = spot.routes.size >= minRoutes.toInt()
+                    return@filter nameMatch && routeCountMatch
+                }
             },
             valueRange = 0f..10f,
             steps = 9,
@@ -88,6 +113,11 @@ fun ListClimbingAreas() {
                 println("Card clicked: $area")
                 selectedArea = area
                 isDialogOpen = true
+            },
+            onDeleteClick = { area ->
+                println("Delete clicked: $area")
+                dao.delete(area)
+                refreshClimbingSpots()
             }
         )
 

@@ -37,7 +37,7 @@ fun ScrapeClimbingArea(
     LaunchedEffect(Unit) {
         isLoading = true
         spots = withContext(Dispatchers.IO) {
-            LeadClimbingScraper().scrapeAllClimbingSpots()
+            LeadClimbingScraper().scrapeAllClimbingSpots(4)
         }
         filteredSpots = spots
         isLoading = false
@@ -88,7 +88,7 @@ fun ScrapeClimbingArea(
                 columns = GridCells.Adaptive(minSize = 250.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxWidth().height(1000.dp)
+                modifier = Modifier.weight(1f)
             ) {
                 items(filteredSpots) { spot ->
                     Card(
