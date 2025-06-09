@@ -45,9 +45,7 @@ fun ScrapeClimbingArea(
 
     LaunchedEffect(filterText) {
         filteredSpots = spots.filter {
-            it.name?.contains(filterText, ignoreCase = true) == true ||
-                    it.coordinates.first.toString().contains(filterText, ignoreCase = true) ||
-                    it.coordinates.second.toString().contains(filterText, ignoreCase = true)
+            it.name.contains(filterText, ignoreCase = true) || it.coordinates.first.toString().contains(filterText, ignoreCase = true) || it.coordinates.second.toString().contains(filterText, ignoreCase = true)
         }
     }
 
@@ -60,6 +58,7 @@ fun ScrapeClimbingArea(
         }
     } else {
         Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+            Text(text="num of filtered ${filteredSpots.size}")
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -88,13 +87,13 @@ fun ScrapeClimbingArea(
                 columns = GridCells.Adaptive(minSize = 250.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.fillMaxWidth().height(300.dp)
             ) {
+                println(filteredSpots)
                 items(filteredSpots) { spot ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(1f)
                             .clickable {
                                 selectedSpot = spot
                                 isDialogOpen = true
