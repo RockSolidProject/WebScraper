@@ -60,9 +60,11 @@ fun ScrapeClimbingArea(
     }
 
     if (isLoading) {
-        Row(modifier = Modifier.fillMaxSize(),
+        Row(
+            modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically) {
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             if (!startScraping) {
 
                 OutlinedTextField(
@@ -77,22 +79,24 @@ fun ScrapeClimbingArea(
 
 
                 if (scrapeLimit != null && scrapeLimit != 0) {
-                    Button(
-                        onClick = {
+                    Box(
+                        modifier = Modifier.clickable {
                             startScraping = true
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0288D1))
+                        }.background(Color(0xFF0288D1), shape = MaterialTheme.shapes.medium)
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        contentAlignment = Alignment.Center
                     ) {
                         Text("Scrape Amount Selected", color = Color.White)
                     }
                 } else {
-                    Button(
+                    Box(
 
-                        onClick = {
+                        modifier = Modifier.clickable {
                             startScraping = true
                             scrapeLimit = null
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0288D1))
+                        }.background(Color(0xFF0288D1), shape = MaterialTheme.shapes.medium)
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        contentAlignment = Alignment.Center
                     ) {
                         Text("Scrape All", color = Color.White)
                     }
@@ -121,12 +125,14 @@ fun ScrapeClimbingArea(
                     label = { Text("Filter Climbing Areas") },
                     modifier = Modifier.weight(1f).padding(end = 8.dp)
                 )
-                Button(
-                    onClick = {
+                Box(
+                    modifier = Modifier.clickable {
                         val added = spots.filter { dao.insert(it) }
                         onAddAreas(added)
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0288D1))
+                    }
+                        .background(Color(0xFF0288D1), shape = MaterialTheme.shapes.medium)
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text("Add All Areas", color = Color.White)
                 }
