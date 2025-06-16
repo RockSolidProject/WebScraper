@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -26,6 +27,8 @@ import webScraper.OutdorSpotsRoutes.LeadClimbingScraper
 fun ScrapeClimbingArea(
     onAddAreas: (List<ClimbingSpot>) -> Unit
 ) {
+    var scrapeLimit by remember { mutableStateOf<Int?>(null) }
+    var startScraping by remember { mutableStateOf(false) }
     var spots by remember { mutableStateOf<List<ClimbingSpot>>(emptyList()) }
     var filteredSpots by remember { mutableStateOf<List<ClimbingSpot>>(emptyList()) }
     var filterText by remember { mutableStateOf("") }
@@ -35,13 +38,17 @@ fun ScrapeClimbingArea(
 
     val dao = ApiClimbingSpot()
 
-    LaunchedEffect(Unit) {
-        isLoading = true
-        spots = withContext(Dispatchers.IO) {
-            LeadClimbingScraper().scrapeAllClimbingSpots()
+    LaunchedEffect(startScraping) {
+        if (startScraping) {
+            isLoading = true
+            spots = withContext(Dispatchers.IO) {
+                LeadClimbingScraper().scrapeAllClimbingSpots(scrapeLimit)
+            }
+            filteredSpots = spots
+            isLoading = false
+            startScraping = false
+
         }
-        filteredSpots = spots
-        isLoading = false
     }
 
     LaunchedEffect(filterText) {
@@ -53,12 +60,57 @@ fun ScrapeClimbingArea(
     }
 
     if (isLoading) {
-        Box(
+        Row(
             modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            CircularProgressIndicator(color = Color(0xFF0288D1))
+            if (!startScraping) {
+
+                OutlinedTextField(
+                    value = scrapeLimit?.toString() ?: "",
+                    onValueChange = {
+
+                        scrapeLimit = it.toIntOrNull()
+                    },
+                    label = { Text("Scrape Limit") },
+                    modifier = Modifier.weight(1f).padding(end = 8.dp)
+                )
+
+
+                if (scrapeLimit != null && scrapeLimit != 0) {
+                    Box(
+                        modifier = Modifier.clickable {
+                            startScraping = true
+                        }.background(Color(0xFF0288D1), shape = MaterialTheme.shapes.medium)
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Scrape Amount Selected", color = Color.White)
+                    }
+                } else {
+                    Box(
+
+                        modifier = Modifier.clickable {
+                            startScraping = true
+                            scrapeLimit = null
+                        }.background(Color(0xFF0288D1), shape = MaterialTheme.shapes.medium)
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Scrape All", color = Color.White)
+                    }
+                }
+            } else {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = Color(0xFF0288D1))
+                }
+            }
         }
+
     } else {
         Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
             Text(text = "Filtered areas: ${filteredSpots.size}")
@@ -73,12 +125,14 @@ fun ScrapeClimbingArea(
                     label = { Text("Filter Climbing Areas") },
                     modifier = Modifier.weight(1f).padding(end = 8.dp)
                 )
-                Button(
-                    onClick = {
+                Box(
+                    modifier = Modifier.clickable {
                         val added = spots.filter { dao.insert(it) }
                         onAddAreas(added)
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0288D1))
+                    }
+                        .background(Color(0xFF0288D1), shape = MaterialTheme.shapes.medium)
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text("Add All Areas", color = Color.White)
                 }
@@ -87,7 +141,7 @@ fun ScrapeClimbingArea(
             Spacer(modifier = Modifier.height(8.dp))
 
             // ⬇️ Reuse your styled UI
-            GridClimbingAreas (
+            GridClimbingAreas(
                 climbingAreas = filteredSpots,
                 onCardClick = {
                     selectedSpot = it
