@@ -1,5 +1,8 @@
 .idea
-
+output_test.txt
+output_test_boulder.txt
+output_test_inside.txt
+output_test_lead.txt
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
@@ -45,3 +48,7 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+/inner_climbing_spots
+/climbing_spots.txt
+/db/.env
+src/main/kotlin/db/envConfig.json
