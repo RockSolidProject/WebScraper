@@ -18,12 +18,14 @@ then they can manage the data in our aplication and also add data with scraping 
 ![image](https://github.com/user-attachments/assets/fabe89b6-7e91-46f5-8dec-93cbe67be2a2)
 
 * Then you can scrape from ksp pzs, and before scraping you can also filter/edit them.
+  
 ![image](https://github.com/user-attachments/assets/5f5202cf-ef0d-4a26-9c3b-985bd44d2b67)
 
 * Then we also have a genrator for random data.
+  
 ![image](https://github.com/user-attachments/assets/94440cc6-76c9-437e-80e0-05ed1c30a6c1)
 
-** You can also do everyting above for climbing areas and the reoutes they contain. **
+* You can also do everyting above for climbing areas and the reoutes they contain. 
 
 
 # Requirements
