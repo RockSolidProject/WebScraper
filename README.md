@@ -1,8 +1,8 @@
 # Welcome to our admin pannel / web scraper app
 This Kotlin based desktop app allows admins to connect with our backend server from our WebApp reposatory ([WebApp reposatory link](https://github.com/RockSolidProject/WebApp)),
 then they can manage the data in our aplication and also add data with scraping from websites (that contain climbing centers, areas and routes in Slovenia):
-* Climbing areas and routes: https://www.plezanje.net/plezalisca/slovenija
-* Climbing centes: https://ksp.pzs.si/plezalisca.php?tip=3
+* Climbing areas and routes: [plezanje.net](https://www.plezanje.net/plezalisca/slovenija)
+* Climbing centes: [ksp.pzs.si](https://ksp.pzs.si/plezalisca.php?tip=3)
 
 ## Showcase
 * Here you can see climbing centers that are curently in the db.
